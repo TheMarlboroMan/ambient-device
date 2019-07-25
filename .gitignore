@@ -1,0 +1,6 @@
+objects/*
+logs/*
+*.exe
+*.out
+*.dll
+makefile

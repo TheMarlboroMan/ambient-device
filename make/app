@@ -1,0 +1,19 @@
+DIR_APP=./class/app/
+
+#Full list of classes
+
+DEP_APP=\
+
+#Class recipes
+
+DEP_APP+=$(DIR_O)clock.o 
+$(DIR_O)clock.o :\
+$(DIR_APP)clock.h \
+$(DIR_APP)clock.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)clock.cpp -o $(DIR_O)clock.o
+
+DEP_APP+=$(DIR_O)background_provider.o 
+$(DIR_O)background_provider.o :\
+$(DIR_APP)background_provider.h \
+$(DIR_APP)background_provider.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)background_provider.cpp -o $(DIR_O)background_provider.o

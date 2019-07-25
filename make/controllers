@@ -1,0 +1,12 @@
+DIR_CONTROLLERS=./class/controllers/
+DEP_CONTROLLERS=\
+
+#Controller recipes.
+
+
+DEP_CONTROLLERS+= $(DIR_O)ambient_c.o
+$(DIR_O)ambient_c.o:$(DIR_CONTROLLERS)ambient.h $(DIR_CONTROLLERS)ambient.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)ambient.cpp -o $(DIR_O)ambient_c.o
+DEP_CONTROLLERS+= $(DIR_O)idle_c.o
+$(DIR_O)idle_c.o:$(DIR_CONTROLLERS)idle.h $(DIR_CONTROLLERS)idle.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)idle.cpp -o $(DIR_O)idle_c.o

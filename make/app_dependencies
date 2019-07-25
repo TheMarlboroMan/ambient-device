@@ -1,0 +1,2 @@
+DEP_APP_DEPENDENCIES=\
+$(DIR_TOOLS)/obj/chrono.o\
