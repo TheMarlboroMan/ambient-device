@@ -9,9 +9,10 @@ config:{
 		text_color_red:255,
 		text_color_green:255,
 		text_color_blue:255,
-		text_color_alpha:255,
-		seconds_between_pictures:10,
-		with_overlay:true
+		text_color_alpha:255,	
+		seconds_between_pictures:5,
+		with_overlay:true,
+		shuffle_pictures:false
 	}, audio:{
 		audio_buffers:1024, audio_channels:16, audio_out:2, audio_ratio:44100, music_volume:127, sound_volume:127
 	}, input:{

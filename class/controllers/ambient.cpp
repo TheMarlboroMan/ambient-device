@@ -28,7 +28,7 @@ controller_ambient::controller_ambient(tools::log& _log,
 		_ttf_manager.get("textfont", _style.get_secondary_font_size()),
 		_style.get_secondary_font_color(),
 		"..."
-	}
+	}, background_provider(_app_config.bool_from_path("config:app:shuffle_pictures"))
 	{
 
 	setup_text_resources();

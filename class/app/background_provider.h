@@ -14,13 +14,13 @@ class background_provider {
 
 	public:
 
+									background_provider(bool);
 	//!Returns a background image instance.
-									background_provider();
 	background						get() const;
 
 	private:
 
-	void							load_defaults();
+	void							load_defaults(bool);
 
 	//!So far, this will be implemented as a queue. We can inject context later.
 	mutable std::vector<background>		defaults;
