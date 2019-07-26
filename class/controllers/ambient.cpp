@@ -89,11 +89,17 @@ void controller_ambient::draw(ldv::screen& screen, int /*fps*/) {
 
 void controller_ambient::awake(dfw::input&) {
 
-	load_new_image();
+	if(nullptr==bg_texture.get()) {
+		load_new_image();
+	}
+
+	stamp=std::time(nullptr);
 	update_clock();
 }
 
 void controller_ambient::load_new_image() {
+
+	//TODO: Catch possible errors...
 
 	//TODO: This should actually be a thread....
 	auto bg=background_provider.get();
@@ -103,10 +109,13 @@ void controller_ambient::load_new_image() {
 
 	assert(nullptr!=bg_texture.get());
 	auto& tex=*bg_texture.get();
+
+	//TODO: Make the clip be proportional to display_box, then center.
+//	background={tex, display_box, {0,0, display_box.w, display_box.h} };
 	background={tex, display_box, {0,0, tex.get_w(), tex.get_h()} };
 
 	//Set the author, date and description of the pics too..
-	std::string txt=bg.get_description()+" by <"+bg.get_author()+">, "+bg.get_date();
+	std::string txt=bg.get_description()+" by "+bg.get_author()+", "+bg.get_date();
 	set_picture_text(txt);
 
 	update_view=true;

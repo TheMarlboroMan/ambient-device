@@ -3,6 +3,9 @@
 #include <fstream>
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
+#include <ctime>
+#include <cstdlib>
 
 using namespace app;
 
@@ -13,14 +16,13 @@ background_provider::background_provider() {
 
 app::background background_provider::get() const {
 
-	auto last=defaults[defaults.size()-1];
-	defaults.pop_back();
-	defaults.insert(std::begin(defaults), last);
-	return last;
+	auto result=defaults[index];
+	if(++index >= defaults.size()-1) {
+		index=0;
+	}
+ 
+	return result;
 }
-
-//TODO: erase.
-#include <iostream>
 
 void background_provider::load_defaults() {
 
@@ -57,4 +59,7 @@ void background_provider::load_defaults() {
 
 		defaults.push_back({pieces[0], pieces[1], pieces[2], pieces[3]});
 	}
+
+	std::srand(std::time(nullptr));
+	std::random_shuffle(std::begin(defaults), std::end(defaults), [](int _v){return std::rand()%_v;});
 }

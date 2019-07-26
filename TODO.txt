@@ -1,0 +1,7 @@
+- Center images, do the proportion thing (letterbox if too narrow).
+- Catch errors when loading images.
+- Fix the overlay bug in the library.
+- Make the overlay larger.
+- Do something with the title screen.
+- Fix user interaction in ambient controller.
+- Fix all TODO in code.

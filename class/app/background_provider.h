@@ -24,6 +24,7 @@ class background_provider {
 
 	//!So far, this will be implemented as a queue. We can inject context later.
 	mutable std::vector<background>		defaults;
+	mutable size_t				index=0;
 };
 
 }
