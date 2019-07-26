@@ -7,10 +7,8 @@
 #include <class/dnot_parser.h>
 #include <source/string_utils.h>
 
-#ifdef WDEBUG_CODE
 #include "../input.h"
 #include "../controllers/states.h"
-#endif
 
 using namespace app;
 
@@ -137,7 +135,15 @@ void state_driver::prepare_state(int _next, int /*current*/) {
 	kernel_ref.get_screen().set_size(w, h);
 
 	log<<"Setting fullscreen status to "<<(int)(_next==t_states::state_ambient)<<"..."<<std::endl;
-	kernel_ref.get_screen().set_fullscreen(_next==t_states::state_ambient);
+
+	auto win=kernel_ref.get_screen().get_window();
+	SDL_SetWindowFullscreen(win,
+		_next==t_states::state_ambient
+			? SDL_WINDOW_FULLSCREEN
+			: 0
+	);
+	//kernel_ref.get_screen().set_fullscreen(_next==t_states::state_ambient);
+
 }
 
 void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {

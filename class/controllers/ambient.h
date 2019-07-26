@@ -54,7 +54,8 @@ class controller_ambient:
 	//properties
 	app::clock						clock;
 	std::unique_ptr<ldv::texture>	bg_texture,
-									overlay_texture;
+									overlay_texture,
+									overlay_hack_texture;
 	bool							update_view=true,
 									with_overlay;
 	time_t							stamp;
@@ -68,7 +69,7 @@ class controller_ambient:
 	ldv::ttf_representation 		clock_rep,
 									pic_info_rep;
 	app::background_provider		background_provider;
-	
+
 };
 
 }

@@ -9,8 +9,8 @@
 
 using namespace app;
 
-controller_ambient::controller_ambient(tools::log& _log, 
-	tools::ttf_manager& _ttf_manager, 
+controller_ambient::controller_ambient(tools::log& _log,
+	tools::ttf_manager& _ttf_manager,
 	const app::app_config& _app_config,
 	const app::style& _style)
 	:log(_log)
@@ -133,32 +133,33 @@ void controller_ambient::set_picture_text(const std::string& _txt) {
 
 void controller_ambient::setup_graphic_resources(const app::style& _style) {
 
-	ldv::image img{"data/bitmap/overlay.png"};
-
 	//TODO: We should have a "texture_from_path"...
-	overlay_texture.reset(new ldv::texture{img});
-
-	overlay={*overlay_texture.get(), 
+	overlay_texture.reset(new ldv::texture{ldv::image{"data/bitmap/overlay.png"}});
+	overlay={*overlay_texture.get(),
 		{0,0, _style.get_container_box().w, overlay_texture->get_h()},
 		{0,0, overlay_texture->get_w(), overlay_texture->get_h()}
 	};
 	overlay.set_blend(ldv::representation::blends::alpha);
 	overlay.set_alpha(255);
+
+	//TODO: Fuck you.
+	overlay_hack_texture.reset(new ldv::texture{ldv::image{"data/bitmap/overlay_hack.png"}});
 }
 
 void controller_ambient::draw_overlay(ldv::screen& _screen) {
 
-	overlay.set_invert_vertical(false);
+	//TODO: Fuck you....
+	overlay.set_texture(*overlay_texture.get());
 	overlay.align(display_box, {
-		ldv::representation_alignment::h::inner_left, 
+		ldv::representation_alignment::h::inner_left,
 		ldv::representation_alignment::v::inner_top
 	});
 	overlay.draw(_screen);
 
 	//TODO: A single stupid line appears... Check the implementation.
-	overlay.set_invert_vertical(true);
+	overlay.set_texture(*overlay_hack_texture.get());
 	overlay.align(display_box, {
-		ldv::representation_alignment::h::inner_left, 
+		ldv::representation_alignment::h::inner_left,
 		ldv::representation_alignment::v::inner_bottom,
 	});
 	overlay.draw(_screen);

@@ -9,6 +9,7 @@
 
 //local.
 #include "app_config.h"
+#include "../controllers/states.h"
 
 //tools
 #include <class/ttf_manager.h>
