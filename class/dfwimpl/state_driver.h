@@ -19,7 +19,7 @@
 //new controller includes here.
 
 //Specific app_config
-//#include "../app/placeholder.h"
+#include "../app/style.h"
 
 namespace app
 {
@@ -45,6 +45,7 @@ class state_driver:
 	void						prepare_resources(dfw::kernel&);
 	void						register_controllers(dfw::kernel&);
 	void 						virtualize_input(dfw::input& input);
+	void						manage_graphic_resources();
 
 	//references
 	app::app_config&				config;
@@ -56,6 +57,9 @@ class state_driver:
 	ptr_controller					c_ambient;
 	ptr_controller					c_idle;
 	//controller instances here.
+
+	//properties...
+	std::unique_ptr<app::style>		style;
 };
 
 }

@@ -15,7 +15,11 @@
 
 //local
 #include "states.h"
+
+//TODO: Is this useful still???
 #include "../dfwimpl/app_config.h"
+
+#include "../app/style.h"
 
 namespace app
 {
@@ -25,7 +29,7 @@ class controller_idle:
 
 	public:
 
-							controller_idle(tools::log&, tools::ttf_manager&, const app::app_config&);
+							controller_idle(tools::log&, tools::ttf_manager&, const app::app_config&, const app::style&);
 	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input& /*input*/) {}
@@ -38,6 +42,7 @@ class controller_idle:
 	tools::log&					log;
 	const tools::ttf_manager&	ttf_manager;
 	const app::app_config&		config;
+	const app::style&			style;
 
 	//properties
 };

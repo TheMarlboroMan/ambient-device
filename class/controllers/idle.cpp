@@ -5,10 +5,15 @@
 
 using namespace app;
 
-controller_idle::controller_idle(tools::log& _log, tools::ttf_manager& _ttf_manager, const app::app_config& _app_config)
+controller_idle::controller_idle(tools::log& _log, 
+	tools::ttf_manager& _ttf_manager, 
+	const app::app_config& _app_config,
+	const app::style& _style)
 	:log(_log)
 	,ttf_manager(_ttf_manager)
-	,config(_app_config) {
+	,config(_app_config)//TODO: Is this useful still???
+	,style(_style)
+{
 
 }
 
@@ -28,8 +33,7 @@ void controller_idle::draw(ldv::screen& _screen, int /*fps*/) {
 
 	_screen.clear(ldv::rgba8(0, 0, 0, 0));
 
-	int font_size=config.int_from_path("config:app:default_font_size");
-
+	int font_size=style.get_idle_font_size();
 	assert(ttf_manager.exists("default", font_size));
 	ldv::ttf_representation fps_text{
 		ttf_manager.get("default", font_size), 

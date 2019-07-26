@@ -9,24 +9,43 @@
 
 using namespace app;
 
-controller_ambient::controller_ambient(tools::log& _log, tools::ttf_manager& _ttf_manager, const app::app_config& _app_config)
+controller_ambient::controller_ambient(tools::log& _log, 
+	tools::ttf_manager& _ttf_manager, 
+	const app::app_config& _app_config,
+	const app::style& _style)
 	:log(_log)
-	, ttf_manager(_ttf_manager)
-	, config(_app_config)
-	, fontpath{"data/fonts/"+config.string_from_path("config:app:clock_font_filename")}
+	, with_overlay(_app_config.bool_from_path("config:app:with_overlay"))
+	, seconds_between_pictures{_app_config.int_from_path("config:app:seconds_between_pictures")}
+	, clock_margin_horizontal{_style.get_clock_horizontal_margin()}
+	, clock_margin_vertical{_style.get_clock_vertical_margin()}
+	, display_box{_style.get_container_box()}
+	, clock_rep{
+		_ttf_manager.get("clockfont", _style.get_clock_font_size()),
+		_style.get_clock_font_color(),
+		"00:00"
+	}
+	, pic_info_rep{
+		_ttf_manager.get("textfont", _style.get_secondary_font_size()),
+		_style.get_secondary_font_color(),
+		"..."
+	}
 	{
+
+	setup_text_resources();
+	setup_graphic_resources(_style);
 
 	stamp=std::time(nullptr);
 }
 
 void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data& /*lid*/) {
 
-	if(_input().is_exit_signal()) {
+	if(_input().is_exit_signal() || _input.is_input_down(input_app::escape)) {
 		set_leave(true);
 		return;
 	}
 
-	if(_input.is_input_down(input_app::space)) {
+	if(_input.is_input_down(input_app::space) ) {
+
 		set_state(t_states::state_idle);
 	}
 
@@ -35,9 +54,8 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 	}
 
 	auto now=std::time(nullptr);
-	if(now-stamp >= config.int_from_path("config:app:seconds_between_pictures")) {
+	if(now-stamp >= seconds_between_pictures) {
 		stamp=now;
-		//TODO: How about some nice transitions?
 		load_new_image();
 	}
 
@@ -55,142 +73,117 @@ void controller_ambient::draw(ldv::screen& screen, int /*fps*/) {
 
 	update_view=false;
 
-	log<<"redrawing"<<std::endl;
+	align_view();
+
 	screen.clear(ldv::rgba8(0, 0, 0, 0));
+
 	background.draw(screen);
 
-	assert(nullptr!=clock_rep.get());
-	clock_rep->draw(screen);
+	if(with_overlay) {
+		draw_overlay(screen);
+	}
 
-	assert(nullptr!=pic_info_rep.get());
-	pic_info_rep->draw(screen);
+	clock_rep.draw(screen);
+	pic_info_rep.draw(screen);
 }
 
 void controller_ambient::awake(dfw::input&) {
 
-	log<<"awakening the ambient controller"<<std::endl;
-
-	//Each time the controller awakens the screen resolution might have changed,
-	//so the size is recalculated and related resources are loaded anew.
-
-	auto di=ldv::get_display_info();
-	display_size.w=(unsigned)di.w;
-	display_size.h=(unsigned)di.h;
-
-	load_text_resources();
 	load_new_image();
 	update_clock();
 }
 
-void controller_ambient::slumber(dfw::input&) {
-
-	log<<"putting the ambient controller to sleep"<<std::endl;
-
-	//Resources are freed once the controller is set to sleep.
-	free_text_resources();
-	free_image_resources();
-}
-
 void controller_ambient::load_new_image() {
 
+	//TODO: This should actually be a thread....
 	auto bg=background_provider.get();
 	ldv::image img{bg.get_path()};
 
-	texture.reset(new ldv::texture(img));
+	bg_texture.reset(new ldv::texture(img));
 
-	assert(nullptr!=texture.get());
-	auto& tex=*texture.get();
-	background={tex, {0, 0, display_size.w, display_size.h}, {0,0, tex.get_w(), tex.get_h()} };
+	assert(nullptr!=bg_texture.get());
+	auto& tex=*bg_texture.get();
+	background={tex, display_box, {0,0, tex.get_w(), tex.get_h()} };
 
 	//Set the author, date and description of the pics too..
-	assert(nullptr!=pic_info_rep.get());
 	std::string txt=bg.get_description()+" by <"+bg.get_author()+">, "+bg.get_date();
-log<<txt<<std::endl;
-
-	pic_info_rep->set_text(txt);
-	pic_info_rep->align(
-		*(clock_rep.get()),
-		ldv::representation_alignment{
-			ldv::representation_alignment::h::inner_right,
-			ldv::representation_alignment::v::outer_bottom,
-			0,
-			0
-		}
-	);
+	set_picture_text(txt);
 
 	update_view=true;
-}
-
-void controller_ambient::free_image_resources() {
-
-	assert(nullptr!=texture.get());
-	texture.reset(nullptr);
 }
 
 void controller_ambient::update_clock() {
 
 	clock.update_time();
-
-	assert(nullptr!=clock_rep.get());
-	clock_rep->set_text(clock.get_time());
-
-	int margin_horizontal_percent=config.int_from_path("config:app:clock_right_margin_percent"),
-		margin_vertical_percent=config.int_from_path("config:app:clock_bottom_margin_percent"),
-		margin_horizontal=(display_size.w * margin_horizontal_percent) / 100,
-		margin_vertical=(display_size.h * margin_vertical_percent) / 100;
-
-	clock_rep->align(
-		{0,0, display_size.w, display_size.h},
-		ldv::representation_alignment{
-			ldv::representation_alignment::h::inner_right,
-			ldv::representation_alignment::v::inner_bottom,
-			margin_horizontal,
-			margin_vertical
-		}
-	);
-
+	clock_rep.set_text(clock.get_time());
 	update_view=true;
 }
 
-void controller_ambient::load_text_resources() {
+void controller_ambient::setup_text_resources() {
 
-	int percent=config.int_from_path("config:app:clock_font_size_percent");
-
-	fontsize=(display_size.h * percent) / 100;
-	secondary_fontsize=(display_size.h * (percent / 2) ) / 100;
-
-	assert(!ttf_manager.exists("clockfont", fontsize));
-	ttf_manager.insert("clockfont", fontsize, fontpath);
-
-	assert(!ttf_manager.exists("textfont", secondary_fontsize));
-	ttf_manager.insert("textfont", secondary_fontsize, fontpath);
-
-	int r=config.int_from_path("config:app:text_color_red"),
-		g=config.int_from_path("config:app:text_color_green"),
-		b=config.int_from_path("config:app:text_color_blue"),
-		a=config.int_from_path("config:app:text_color_alpha");
-
-	clock_rep.reset(new ldv::ttf_representation{
-		ttf_manager.get("clockfont", fontsize),
-		ldv::rgba8(r, g, b, a),
-		""}
-	);
-
-	pic_info_rep.reset(new ldv::ttf_representation{
-		ttf_manager.get("textfont", secondary_fontsize),
-		ldv::rgba8(r, g, b, a),
-		""}
-	);
+	clock_rep.set_text_align(ldv::ttf_representation::text_align::right);
+	pic_info_rep.set_text_align(ldv::ttf_representation::text_align::right);
 }
 
-void controller_ambient::free_text_resources() {
+void controller_ambient::set_picture_text(const std::string& _txt) {
 
-	assert(ttf_manager.exists("clockfont", fontsize));
-	ttf_manager.erase("clockfont", fontsize);
+	//Most useless method ever.
+	pic_info_rep.set_text(_txt);
+}
 
-	assert(ttf_manager.exists("textfont", secondary_fontsize));
-	ttf_manager.erase("textfont", secondary_fontsize);
+void controller_ambient::setup_graphic_resources(const app::style& _style) {
 
-	clock_rep.reset(nullptr);
-	pic_info_rep.reset(nullptr);
+	ldv::image img{"data/bitmap/overlay.png"};
+
+	//TODO: We should have a "texture_from_path"...
+	overlay_texture.reset(new ldv::texture{img});
+
+	overlay={*overlay_texture.get(), 
+		{0,0, _style.get_container_box().w, overlay_texture->get_h()},
+		{0,0, overlay_texture->get_w(), overlay_texture->get_h()}
+	};
+	overlay.set_blend(ldv::representation::blends::alpha);
+	overlay.set_alpha(255);
+}
+
+void controller_ambient::draw_overlay(ldv::screen& _screen) {
+
+	overlay.set_invert_vertical(false);
+	overlay.align(display_box, {
+		ldv::representation_alignment::h::inner_left, 
+		ldv::representation_alignment::v::inner_top
+	});
+	overlay.draw(_screen);
+
+	//TODO: A single stupid line appears... Check the implementation.
+	overlay.set_invert_vertical(true);
+	overlay.align(display_box, {
+		ldv::representation_alignment::h::inner_left, 
+		ldv::representation_alignment::v::inner_bottom,
+	});
+	overlay.draw(_screen);
+}
+
+void controller_ambient::align_view() {
+
+	//Allows alignment of textual elements, so the clock can be aligned
+	//according to the screen and the text according to the clock, regardless
+	//of their update order.
+	clock_rep.align(
+		display_box,
+		ldv::representation_alignment{
+			ldv::representation_alignment::h::inner_right,
+			ldv::representation_alignment::v::inner_bottom,
+			clock_margin_horizontal,
+			clock_margin_vertical
+		}
+	);
+
+	pic_info_rep.align(
+		clock_rep,
+		ldv::representation_alignment{
+			ldv::representation_alignment::h::inner_right,
+			ldv::representation_alignment::v::outer_bottom,
+		}
+	);
 }

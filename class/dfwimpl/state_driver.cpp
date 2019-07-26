@@ -37,17 +37,14 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	log<<"preparing resources..."<<std::endl;
 	prepare_resources(kernel);
 
+	log<<"registering graphic resources..."<<std::endl;
+	manage_graphic_resources();
+
 	log<<"registering controllers..."<<std::endl;
 	register_controllers(kernel);
 
 	log<<"virtualizing input..."<<std::endl;
 	virtualize_input(kernel.get_input());
-
-	log<<"registering default fonts..."<<std::endl;
-
-	ttf_manager.insert("default", 
-		config.int_from_path("config:app:default_font_size"),
-		"data/fonts/"+config.string_from_path("config:app:default_font_filename"));
 
 	log<<"state driver fully constructed"<<std::endl;
 }
@@ -114,8 +111,8 @@ void state_driver::register_controllers(dfw::kernel& /*_kernel*/) {
 		register_controller(_i, *_ptr);
 	};
 
-	reg(c_ambient, t_states::state_ambient, new controller_ambient(log, ttf_manager, config));
-	reg(c_idle, t_states::state_idle, new controller_idle(log, ttf_manager, config));
+	reg(c_ambient, t_states::state_ambient, new controller_ambient(log, ttf_manager, config, *style.get()));
+	reg(c_idle, t_states::state_idle, new controller_idle(log, ttf_manager, config, *style.get()));
 	//register controllers here.
 }
 
@@ -123,14 +120,14 @@ void state_driver::prepare_state(int _next, int /*current*/) {
 
 	log<<"next state will be "<<_next<<std::endl;
 
-	auto display_properties=ldv::get_display_info();
+	auto box=style->get_container_box();
 
 	int w=_next==t_states::state_ambient
-		? display_properties.w
+		? box.w
 		: config.int_from_path("config:video:window_w_px");
 
 	int h=_next==t_states::state_ambient
-		? display_properties.h
+		? box.h
 		: config.int_from_path("config:video:window_h_px");
 
 	log<<"Setting logical screen size to "<<w<<"x"<<h<<"..."<<std::endl;
@@ -172,4 +169,49 @@ void state_driver::virtualize_input(dfw::input& input) {
 		input().virtualize_joystick_axis(i, 15000);
 		log<<"Joystick virtualized "<<i<<std::endl;
 	}
+}
+
+void state_driver::manage_graphic_resources() {
+
+	//Start by getting the current screen resolution...
+	auto di=ldv::get_display_info();
+
+	//Now calculate the relative font sizes...
+	int idle_font_size=config.int_from_path("config:app:default_font_size"),
+		percent=config.int_from_path("config:app:clock_font_size_percent"),
+		clock_font_size=(di.h * percent) / 100,
+		secondary_font_size=(di.h * (percent / 3) ) / 100;
+
+	//Some work on colours...
+	int r=config.int_from_path("config:app:text_color_red"),
+		g=config.int_from_path("config:app:text_color_green"),
+		b=config.int_from_path("config:app:text_color_blue"),
+		a=config.int_from_path("config:app:text_color_alpha");
+
+	//And margins...
+	int margin_horizontal=(di.w * config.int_from_path("config:app:clock_horizontal_margin_percent")) / 100,
+		margin_vertical=(di.h * config.int_from_path("config:app:clock_vertical_margin_percent")) / 100;
+
+	//Now we can create the "style" thing, which will be passed along to the
+	//controllers...
+
+	style.reset(new app::style(
+		clock_font_size,
+		secondary_font_size,
+		idle_font_size,
+		margin_vertical,
+		margin_horizontal,
+		di.w,
+		di.h,
+		ldv::rgba8(r, g, b, a)
+	));
+
+	//Finally, we can register fonts.
+	const std::string font_path="data/fonts/",
+		idle_font_path=font_path+config.string_from_path("config:app:default_font_filename"),
+		clock_font_path=font_path+config.string_from_path("config:app:clock_font_filename");
+
+	ttf_manager.insert("default", style->get_idle_font_size(), idle_font_path);
+	ttf_manager.insert("textfont", style->get_secondary_font_size(), clock_font_path);
+	ttf_manager.insert("clockfont", style->get_clock_font_size(), clock_font_path);
 }

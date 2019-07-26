@@ -7,6 +7,7 @@ namespace app {
 
 struct background {
 
+	//TODO: Make private, create constructor.
 	std::string				path,
 							author,
 							description,

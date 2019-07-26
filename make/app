@@ -6,6 +6,12 @@ DEP_APP=\
 
 #Class recipes
 
+DEP_APP+=$(DIR_O)style.o 
+$(DIR_O)style.o :\
+$(DIR_APP)style.h \
+$(DIR_APP)style.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)style.cpp -o $(DIR_O)style.o
+
 DEP_APP+=$(DIR_O)clock.o 
 $(DIR_O)clock.o :\
 $(DIR_APP)clock.h \

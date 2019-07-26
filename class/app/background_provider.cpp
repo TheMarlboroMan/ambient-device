@@ -19,6 +19,9 @@ app::background background_provider::get() const {
 	return last;
 }
 
+//TODO: erase.
+#include <iostream>
+
 void background_provider::load_defaults() {
 
 	std::ifstream f("data/app/default_pics.dat");
@@ -39,7 +42,7 @@ void background_provider::load_defaults() {
 
 			//Data is separated by tabs...
 			pos=line.find("\t", pos);
-			pieces.push_back(line.substr(begin, pos));
+			pieces.push_back(line.substr(begin, pos-begin));
 
 			if(std::string::npos==pos) {
 				break;
