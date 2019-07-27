@@ -57,7 +57,9 @@ class controller_ambient:
 									overlay_texture,
 									overlay_hack_texture;
 	bool							update_view=true,
-									with_overlay;
+									with_overlay,
+									show_seconds,
+									lazy_render;
 	time_t							stamp;
 	int								seconds_between_pictures,
 									clock_margin_horizontal,

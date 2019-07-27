@@ -15,6 +15,8 @@ controller_ambient::controller_ambient(tools::log& _log,
 	const app::style& _style)
 	:log(_log)
 	, with_overlay(_app_config.bool_from_path("config:app:with_overlay"))
+	, show_seconds(_app_config.bool_from_path("config:app:show_seconds"))
+	, lazy_render(_app_config.bool_from_path("config:app:lazy_render"))
 	, seconds_between_pictures{_app_config.int_from_path("config:app:seconds_between_pictures")}
 	, clock_margin_horizontal{_style.get_clock_horizontal_margin()}
 	, clock_margin_vertical{_style.get_clock_vertical_margin()}
@@ -49,10 +51,13 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 		set_state(t_states::state_idle);
 	}
 
-	if(clock.has_changed(std::time(nullptr))) {
+	if(clock.has_changed(std::time(nullptr), show_seconds)) {
+
+log<<tools::ltime::datetime<<" clock change..."<<std::endl;
 		update_clock();
 	}
 
+//TODO: I wish the clock could take care of this too...
 	auto now=std::time(nullptr);
 	if(now-stamp >= seconds_between_pictures) {
 		stamp=now;
@@ -67,9 +72,11 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 
 void controller_ambient::draw(ldv::screen& screen, int /*fps*/) {
 
-	if(!update_view) {
+	if(lazy_render && !update_view) {
 		return;
 	}
+
+log<<tools::ltime::datetime<<" updating view"<<std::endl;
 
 	update_view=false;
 
@@ -124,7 +131,7 @@ void controller_ambient::load_new_image() {
 void controller_ambient::update_clock() {
 
 	clock.update_time();
-	clock_rep.set_text(clock.get_time());
+	clock_rep.set_text(clock.get_time(show_seconds));
 	update_view=true;
 }
 

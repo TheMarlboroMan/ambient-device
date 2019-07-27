@@ -17,15 +17,16 @@ class clock {
 	void								update_time();
 
 	//!Will return true if the parameter is a change of minute/hour with respect
-	//to "now".
-	bool								has_changed(time_t) const;
+	//to "now". Optionally it can report a change of seconds.
+	bool								has_changed(time_t, bool) const;
 
-	//!Returns the current hour and minute as a string.
-	std::string							get_time() const;
+	//!Returns the current hour and minute as a string (optionally seconds)
+	std::string							get_time(bool) const;
 
 	private:
 
-	time_t								now;
+	time_t								now,
+									fixed_to_minute;
 };
 
 }

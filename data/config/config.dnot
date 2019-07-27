@@ -10,9 +10,11 @@ config:{
 		text_color_green:255,
 		text_color_blue:255,
 		text_color_alpha:255,	
-		seconds_between_pictures:5,
+		seconds_between_pictures:25,
 		with_overlay:true,
-		shuffle_pictures:false
+		shuffle_pictures:true,
+		show_seconds:false,
+		lazy_render:false
 	}, audio:{
 		audio_buffers:1024, audio_channels:16, audio_out:2, audio_ratio:44100, music_volume:127, sound_volume:127
 	}, input:{
@@ -29,6 +31,6 @@ config:{
 	}, meta:{
 		v:1
 	}, video:{
-		double_buffer:1, fullscreen:false, vsync:false, window_h_logical:200, window_h_px:200, window_show_cursor:false, window_title:"Ambient device", window_w_logical:300, window_w_px:300
+		double_buffer:0, fullscreen:false, vsync:false, window_h_logical:200, window_h_px:200, window_show_cursor:false, window_title:"Ambient device", window_w_logical:300, window_w_px:300
 	}
 }
