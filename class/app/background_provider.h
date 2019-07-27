@@ -16,15 +16,20 @@ class background_provider {
 
 									background_provider(bool);
 	//!Returns a background image instance.
-	background						get() const;
+	background						get();
 
 	private:
 
-	void							load_defaults(bool);
+	void							load_defaults();
+	void							shuffle_contents();
+
+	//!Indicates whether or not the pictures will be shuffled on load and after the
+	//!queue is done.
+	bool							shuffle;
 
 	//!So far, this will be implemented as a queue. We can inject context later.
-	mutable std::vector<background>		defaults;
-	mutable size_t				index=0;
+	std::vector<background>		defaults;
+	size_t				index=0;
 };
 
 }

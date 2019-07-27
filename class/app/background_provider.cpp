@@ -9,22 +9,26 @@
 
 using namespace app;
 
-background_provider::background_provider(bool _shuffle) {
+background_provider::background_provider(bool _shuffle)
+	:shuffle(_shuffle) {
 
-	load_defaults(_shuffle);
+	load_defaults();
 }
 
-app::background background_provider::get() const {
+app::background background_provider::get() {
 
 	auto result=defaults[index];
 	if(++index >= defaults.size()-1) {
 		index=0;
+		if(shuffle) {
+			shuffle_contents();	
+		}
 	}
  
 	return result;
 }
 
-void background_provider::load_defaults(bool _shuffle) {
+void background_provider::load_defaults() {
 
 	std::ifstream f("data/app/default_pics.dat");
 	if(!f) {
@@ -60,8 +64,13 @@ void background_provider::load_defaults(bool _shuffle) {
 		defaults.push_back({pieces[0], pieces[1], pieces[2], pieces[3]});
 	}
 
-	if(_shuffle) {
-		std::srand(std::time(nullptr));
-		std::random_shuffle(std::begin(defaults), std::end(defaults), [](int _v){return std::rand()%_v;});
+	if(shuffle) {
+		shuffle_contents();
 	}
+}
+
+void background_provider::shuffle_contents() {
+
+	std::srand(std::time(nullptr));
+	std::random_shuffle(std::begin(defaults), std::end(defaults), [](int _v){return std::rand()%_v;});
 }

@@ -6,6 +6,8 @@
 
 //local
 #include "../input.h"
+#include "../app/size_calculator.h"
+
 
 using namespace app;
 
@@ -117,9 +119,18 @@ void controller_ambient::load_new_image() {
 	assert(nullptr!=bg_texture.get());
 	auto& tex=*bg_texture.get();
 
-	//TODO: Make the clip be proportional to display_box, then center.
-//	background={tex, display_box, {0,0, display_box.w, display_box.h} };
-	background={tex, display_box, {0,0, tex.get_w(), tex.get_h()} };
+	app::size_calculator calc;
+	app::rect pos, clip;
+
+	calc.calculate(
+		{0, 0, tex.get_w(), tex.get_h()},
+		{0, 0, display_box.w, display_box.h},
+		pos, clip
+	);
+
+	background.set_texture(tex);
+	background.set_location({pos.x, pos.y, pos.w, pos.h});
+	background.set_clip({clip.x, clip.y, clip.w, clip.h});
 
 	//Set the author, date and description of the pics too..
 	std::string txt=bg.get_description()+" by "+bg.get_author()+", "+bg.get_date();
