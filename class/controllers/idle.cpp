@@ -38,8 +38,17 @@ void controller_idle::draw(ldv::screen& _screen, int /*fps*/) {
 	ldv::ttf_representation fps_text{
 		ttf_manager.get("default", font_size), 
 		ldv::rgba8(255, 255, 255, 255), 
-		"..."
+		"Press space..."
 	};
-	fps_text.go_to({0,0});
+
+	fps_text.align(
+		_screen.get_rect(), {
+			ldv::representation_alignment::h::center,
+			ldv::representation_alignment::v::center
+		}
+	);
+
+	
+
 	fps_text.draw(_screen);
 }

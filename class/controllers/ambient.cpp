@@ -19,6 +19,7 @@ controller_ambient::controller_ambient(tools::log& _log,
 	, with_overlay(_app_config.bool_from_path("config:app:with_overlay"))
 	, show_seconds(_app_config.bool_from_path("config:app:show_seconds"))
 	, lazy_render(_app_config.bool_from_path("config:app:lazy_render"))
+	, letterbox_pictures(_app_config.bool_from_path("config:app:letterbox_pictures"))
 	, seconds_between_pictures{_app_config.int_from_path("config:app:seconds_between_pictures")}
 	, clock_margin_horizontal{_style.get_clock_horizontal_margin()}
 	, clock_margin_vertical{_style.get_clock_vertical_margin()}
@@ -53,6 +54,23 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 		set_state(t_states::state_idle);
 	}
 
+	if(
+			_input().is_event_keyboard_down() 
+		|| _input().is_event_mouse_button_down() 
+//TODO: Fuck you... This doesn't work...
+//		|| _input().is_event_mouse_movement()
+	) {
+		set_state(t_states::state_idle);
+	}
+
+
+	//TODO: No, no, no, here's what we do: make a better clock, property of
+	//the state driver. Pass it around, tick it on the state driver itself
+	//or even have a thread to tick it if you feel like that... Then feed the
+	//clock with meaningful intervals and signals it can answer to. We should 
+	//be able to ask it for "seconds" and "minutes", but also for "notify me
+	//in 25 seconds, label it 'blah'" and then ask "has 'blah' happened yet"?
+
 	if(clock.has_changed(std::time(nullptr), show_seconds)) {
 
 log<<tools::ltime::datetime<<" clock change..."<<std::endl;
@@ -65,11 +83,6 @@ log<<tools::ltime::datetime<<" clock change..."<<std::endl;
 		stamp=now;
 		load_new_image();
 	}
-
-//TODO: Fuck you. Really.
-//	if(_input().is_event_keyboard_down() || _input().is_event_mouse_button_down() || _input().is_event_mouse_movement()) {
-//		set_state(t_states::state_idle);
-//	}
 }
 
 void controller_ambient::draw(ldv::screen& screen, int /*fps*/) {
@@ -77,8 +90,6 @@ void controller_ambient::draw(ldv::screen& screen, int /*fps*/) {
 	if(lazy_render && !update_view) {
 		return;
 	}
-
-log<<tools::ltime::datetime<<" updating view"<<std::endl;
 
 	update_view=false;
 
@@ -108,13 +119,18 @@ void controller_ambient::awake(dfw::input&) {
 
 void controller_ambient::load_new_image() {
 
-	//TODO: Catch possible errors...
-
-	//TODO: This should actually be a thread....
 	auto bg=background_provider.get();
-	ldv::image img{bg.get_path()};
 
-	bg_texture.reset(new ldv::texture(img));
+		//TODO: This should actually be a thread....
+	try {
+		ldv::image img{bg.get_path()};
+		bg_texture.reset(new ldv::texture(img));
+	}
+	catch(std::exception& e) {
+
+		log<<"Could not load picture: "<<e.what()<<std::endl;
+		return;
+	}
 
 	assert(nullptr!=bg_texture.get());
 	auto& tex=*bg_texture.get();
@@ -122,7 +138,11 @@ void controller_ambient::load_new_image() {
 	app::size_calculator calc;
 	app::rect pos, clip;
 
-	calc.calculate(
+	void(app::size_calculator::*fnptr)(rect, rect, rect&, rect&)=letterbox_pictures
+		? &app::size_calculator::letterbox
+		: &app::size_calculator::fill;
+
+	(calc.*(fnptr))(
 		{0, 0, tex.get_w(), tex.get_h()},
 		{0, 0, display_box.w, display_box.h},
 		pos, clip

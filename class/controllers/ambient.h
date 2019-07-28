@@ -59,7 +59,8 @@ class controller_ambient:
 	bool							update_view=true,
 									with_overlay,
 									show_seconds,
-									lazy_render;
+									lazy_render,
+									letterbox_pictures;
 	time_t							stamp;
 	int								seconds_between_pictures,
 									clock_margin_horizontal,

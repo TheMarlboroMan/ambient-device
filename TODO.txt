@@ -1,5 +1,4 @@
 - Add an option to letterbox (instead of growing/shrinking).
-- Catch errors when loading images.
 - Fix the overlay bug in the library.
 - Add configurable refresh time when lazy rendering.
 - Do something with the title screen.
@@ -7,6 +6,7 @@
 	- Make it smaller.
 	- Add a title.
 - Fix user interaction in ambient controller
+	- Can it be something with the change of controller in the library???.
 - Fix all TODO in code.
 - Do real image resize using imagemagick (optional compilation flags)
 	- This would help with the "out of juice" thing.

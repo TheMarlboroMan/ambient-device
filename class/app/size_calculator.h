@@ -21,7 +21,10 @@ class size_calculator {
 
 	public:
 
-	void	calculate(rect _pic, rect _canvas, rect& _pos, rect& _clip);
+	//!Writes to _pos and _clip so the image fills the display.
+	void	fill(rect _pic, rect _canvas, rect& _pos, rect& _clip);
+	//!Writes to _pos and _clip so the image is letterboxes in the display.
+	void	letterbox(rect _pic, rect _canvas, rect& _pos, rect& _clip);
 
 	private:
 
