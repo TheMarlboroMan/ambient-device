@@ -25,7 +25,6 @@ class size_calculator {
 
 	private:
 
-	point	center(rect _pic, rect _canvas);
 };
 
 }
