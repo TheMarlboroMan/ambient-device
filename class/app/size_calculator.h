@@ -13,22 +13,19 @@ struct rect {
 	unsigned	w, h;
 };
 
-
+struct point {
+	int		x, y;
+};
 
 class size_calculator {
 
 	public:
 
-	void	calculate(rect _pic, rect _canvas, rect& _pos, rect& _clip) {
-		//TODO: center,
-		//Calculate...
-		//Recenter.
-
-		_pos=rect(0, 0, _canvas.w, _canvas.h);
-		_clip=rect(0, 0, _pic.w, _pic.h);
-	};
+	void	calculate(rect _pic, rect _canvas, rect& _pos, rect& _clip);
 
 	private:
+
+	point	center(rect _pic, rect _canvas);
 };
 
 }

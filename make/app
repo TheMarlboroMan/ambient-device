@@ -23,3 +23,9 @@ $(DIR_O)background_provider.o :\
 $(DIR_APP)background_provider.h \
 $(DIR_APP)background_provider.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)background_provider.cpp -o $(DIR_O)background_provider.o
+
+DEP_APP+=$(DIR_O)size_calculator.o 
+$(DIR_O)size_calculator.o :\
+$(DIR_APP)size_calculator.h \
+$(DIR_APP)size_calculator.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)size_calculator.cpp -o $(DIR_O)size_calculator.o

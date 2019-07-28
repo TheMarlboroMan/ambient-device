@@ -64,12 +64,20 @@ void background_provider::load_defaults() {
 		defaults.push_back({pieces[0], pieces[1], pieces[2], pieces[3]});
 	}
 
+	if(!defaults.size()) {
+		throw std::runtime_error("default images are needed");
+	}
+
 	if(shuffle) {
 		shuffle_contents();
 	}
 }
 
 void background_provider::shuffle_contents() {
+
+	if(1==defaults.size()) {
+		return;
+	}
 
 	std::srand(std::time(nullptr));
 	std::random_shuffle(std::begin(defaults), std::end(defaults), [](int _v){return std::rand()%_v;});

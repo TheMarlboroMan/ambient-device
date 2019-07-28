@@ -5,8 +5,8 @@ DEP_CONTROLLERS=\
 
 
 DEP_CONTROLLERS+= $(DIR_O)ambient_c.o
-$(DIR_O)ambient_c.o:$(DIR_CONTROLLERS)ambient.h $(DIR_CONTROLLERS)ambient.cpp
+$(DIR_O)ambient_c.o:$(DIR_CONTROLLERS)ambient.h $(DIR_CONTROLLERS)ambient.cpp $(DIR_O)size_calculator.o $(DIR_O)background_provider.o $(DIR_O)style.o 
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)ambient.cpp -o $(DIR_O)ambient_c.o
 DEP_CONTROLLERS+= $(DIR_O)idle_c.o
-$(DIR_O)idle_c.o:$(DIR_CONTROLLERS)idle.h $(DIR_CONTROLLERS)idle.cpp
+$(DIR_O)idle_c.o:$(DIR_CONTROLLERS)idle.h $(DIR_CONTROLLERS)idle.cpp $(DIR_O)style.o 
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)idle.cpp -o $(DIR_O)idle_c.o

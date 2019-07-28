@@ -10,9 +10,9 @@ config:{
 		text_color_green:255,
 		text_color_blue:255,
 		text_color_alpha:255,	
-		seconds_between_pictures:25,
+		seconds_between_pictures:30,
 		with_overlay:true,
-		shuffle_pictures:true,
+		shuffle_pictures:false,
 		show_seconds:false,
 		lazy_render:false
 	}, audio:{
