@@ -5,6 +5,8 @@
 
 using namespace app;
 
+
+
 controller_idle::controller_idle(tools::log& _log, 
 	tools::ttf_manager& _ttf_manager, 
 	const app::app_config& _app_config,
@@ -29,10 +31,29 @@ void controller_idle::loop(dfw::input& _input, const dfw::loop_iteration_data& /
 	}
 }
 
+//#include <source/file_utils.h>
+//#include "../../../curl_request/src/curl_request.cpp"
+
 void controller_idle::draw(ldv::screen& _screen, int /*fps*/) {
 
+/*
+	tools::curl_request req("http://www.caballorenoir.net/undev/media/entradas/entrada_10.jpg");
+	std::string funk=req.send().get_response_body();
+
+//	std::string funk=tools::dump_file("../entrada_13.jpg");
+	std::vector<unsigned char> raw(std::begin(funk), std::end(funk));
+
+	ldv::image img(raw);
+	ldv::texture tex(img);
+
+	ldv::rect r{0,0, tex.get_w(), tex.get_h()};
+	ldv::bitmap_representation bmp(tex, r, r);
+	
 	_screen.clear(ldv::rgba8(0, 0, 0, 0));
 
+	bmp.go_to({0,0});
+	bmp.draw(_screen);
+*/
 	int font_size=style.get_idle_font_size();
 	assert(ttf_manager.exists("default", font_size));
 	ldv::ttf_representation fps_text{
