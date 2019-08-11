@@ -28,6 +28,9 @@ class size_calculator {
 
 	private:
 
+	double	ratio(double, double) const;
+	double	scale_factor(double, double) const;
+
 };
 
 }

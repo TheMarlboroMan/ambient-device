@@ -5,41 +5,64 @@ using namespace app;
 //TODO: Erase
 #include <iostream>
 
+double size_calculator::ratio(double _w, double _h) const {
+
+	return _w / _h;
+}
+
+//TODO: Look, same implementation as ratio XD!.
+double size_calculator::scale_factor(double _a, double _b) const {
+
+	return _a / _b;	
+}
+
 void size_calculator::fill(rect _pic, rect _canvas, rect& _pos, rect& _clip) {
 
-	//This is the ratio we must have for our image...
-	double display_ratio=(double)_canvas.w / (double)_canvas.h;
+	//Position: this is easy: all we want is for the picture to take the full
+	//canvas.
+	_pos=_canvas;
 
-	_clip.w=_pic.w;
-	_clip.h=_pic.h;
+	//Ratio relationship will tell us the dominant dimension of the picture.	
+	double 	image_ratio=ratio(_pic.w, _pic.h),
+			display_ratio=ratio(_canvas.w, _canvas.h);
+	
+	//This means that we need to use the full height for the clip and center in
+	//the width....
+	if(image_ratio > display_ratio) {
 
-	//We must get the smallest dimension for the picture, so that's the one
-	//that fills up the display. So far, we just adjust so that we clip on 
-	//the smallest dimension.
-	if(_pic.w < _pic.h) { //A high- picture...
-std::cout<<"high"<<std::endl;
-		_clip.h=(double)_clip.w / display_ratio;
-		_clip.y=((int)_pic.h - (int)_clip.h) / 2;
+		std::cout<<"use full height, center width"<<std::endl;
+
+		//Scale the display according to the picture h.
+		double scale=scale_factor(_pic.h, _canvas.h);
+		auto display=rect(0, 0, _canvas.w * scale, _canvas.h * scale);
+
+		//Clipping to full height... The width? The display one.
+		_clip.h=_pic.h;
+		_clip.w=display.w;
+		_clip.y=0;
+
+		//Aaaaand center.
+		_clip.x=(_pic.w - display.w) / 2;
 	}
-	else { //A wide picture...
+	//Here we work with the height.
+	else {
+		//TODO: Good, now refactor this shit and make it as generic as possible,
+		//since the algorithm is... the same :/.
+		std::cout<<"use full width, center height"<<std::endl;
 
-//TODO: This is NOT it...
-		_clip.w=(double)_clip.h * display_ratio;
-		//TODO: Not in your fucking life...
-//TODO Negative numbers!!!
-std::cout<<"wide"<<std::endl;
-std::cout<<"calc.:"<<_pic.w<<" - "<<_clip.w<<std::endl;
-		_clip.x=0; //((int)_pic.w - (int)_clip.w) / 2;
+		//Scale the display according to the picture h.
+		double scale=scale_factor(_pic.w, _canvas.w);
+		auto display=rect(0, 0, _canvas.w * scale, _canvas.h * scale);
+
+		//Clipping to full height... The width? The display one.
+		_clip.w=_pic.w;
+		_clip.h=display.h;
+		_clip.x=0;
+
+		//Please, center...
+		_clip.y=(_pic.h - display.h) / 2;		
 	}
 
-	//The beautiful part is that openGL will resize the image so that it fits:
-	//no need for us to calculate new width / height.
-
-	//This just must be done... There's no calculation involved.
-	_pos=rect(0, 0, _canvas.w, _canvas.h);
-
-std::cout<<"pic: "<<_pic.w<<" X "<<_pic.h<<std::endl;
-std::cout<<"clip:"<<_clip.x<<" , "<<_clip.y<<" -> "<<_clip.w<<" X "<<_clip.h<<std::endl;
 }
 
 void size_calculator::letterbox(rect _pic, rect _canvas, rect& _pos, rect& _clip) {
