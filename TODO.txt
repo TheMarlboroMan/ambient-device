@@ -10,3 +10,5 @@
 - Fix all TODO in code.
 - Do real image resize using imagemagick (optional compilation flags)
 	- This would help with the "out of juice" thing.
+- Load images in separate thread
+- Use remote service for images
