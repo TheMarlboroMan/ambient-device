@@ -36,24 +36,28 @@ void controller_idle::loop(dfw::input& _input, const dfw::loop_iteration_data& /
 
 void controller_idle::draw(ldv::screen& _screen, int /*fps*/) {
 
-/*
-	tools::curl_request req("http://www.caballorenoir.net/undev/media/entradas/entrada_10.jpg");
-	std::string funk=req.send().get_response_body();
+//	tools::curl_request req("http://www.caballorenoir.net/undev/media/entradas/entrada_10.jpg");
+//	std::string funk=req.send().get_response_body();
 
 //	std::string funk=tools::dump_file("../entrada_13.jpg");
-	std::vector<unsigned char> raw(std::begin(funk), std::end(funk));
+//	std::vector<unsigned char> raw(std::begin(funk), std::end(funk));
+//	ldv::image img(raw);
 
-	ldv::image img(raw);
-	ldv::texture tex(img);
+//	ldv::image img(
+//		reinterpret_cast<const unsigned char * const>(funk.c_str()), 
+//		funk.size()
+//	);
 
-	ldv::rect r{0,0, tex.get_w(), tex.get_h()};
-	ldv::bitmap_representation bmp(tex, r, r);
+//	ldv::texture tex(img);
+
+//	ldv::rect r{0,0, tex.get_w(), tex.get_h()};
+//	ldv::bitmap_representation bmp(tex, r, r);
 	
 	_screen.clear(ldv::rgba8(0, 0, 0, 0));
 
 	bmp.go_to({0,0});
 	bmp.draw(_screen);
-*/
+
 	int font_size=style.get_idle_font_size();
 	assert(ttf_manager.exists("default", font_size));
 	ldv::ttf_representation fps_text{
