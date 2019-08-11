@@ -2,7 +2,6 @@
 
 using namespace app;
 
-//TODO: Erase
 #include <iostream>
 
 double size_calculator::ratio(double _w, double _h) const {
@@ -25,12 +24,10 @@ void size_calculator::fill(rect _pic, rect _canvas, rect& _pos, rect& _clip) {
 	//Ratio relationship will tell us the dominant dimension of the picture.	
 	double 	image_ratio=ratio(_pic.w, _pic.h),
 			display_ratio=ratio(_canvas.w, _canvas.h);
-	
+
 	//This means that we need to use the full height for the clip and center in
 	//the width....
 	if(image_ratio > display_ratio) {
-
-		std::cout<<"use full height, center width"<<std::endl;
 
 		//Scale the display according to the picture h.
 		double scale=scale_factor(_pic.h, _canvas.h);
@@ -48,7 +45,6 @@ void size_calculator::fill(rect _pic, rect _canvas, rect& _pos, rect& _clip) {
 	else {
 		//TODO: Good, now refactor this shit and make it as generic as possible,
 		//since the algorithm is... the same :/.
-		std::cout<<"use full width, center height"<<std::endl;
 
 		//Scale the display according to the picture h.
 		double scale=scale_factor(_pic.w, _canvas.w);
