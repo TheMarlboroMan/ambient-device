@@ -29,3 +29,5 @@ TODO
 - pic service?
 - check in some other systems for opengl glitches
 - runnable from everywhere
+- skip pic
+- preload next pic in separate thread
