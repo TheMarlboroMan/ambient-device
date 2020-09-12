@@ -36,3 +36,4 @@ TODO
 - runnable from everywhere
 - skip pic, prev pic, pause slide, restore slide...
 - preload next pic in separate thread
+- pic count (N/M)
