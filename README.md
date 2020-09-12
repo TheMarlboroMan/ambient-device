@@ -20,14 +20,19 @@ TODO
 - Q: Pictures appear for a few seconds, the dissapear and are replaced by a black screen or even a picture that appeared not long ago... Also, sometimes the clock seems to go backwards.
 - A: Disable "lazy_render" in the configuration file. Lazy rendering is supposed to update the screen only when needed (a picture change, a clock change...) but that does not play nice with all systems. Disabling it will force your computer to draw non-stop, but at least it won't be annoying.
 
+- Q: My picture is sideways!!
+- A: The program does nothing with EXIF data (which stores the way the camera was oriented). Please, rotate it manually.
+
 ## TODO
 
+- segmentation violation when showing seconds
+- crash when loading invalid pic, better to skip and detect infinite bad loop.
 - config menu
 - pic crossfade (optional)
 - update source to new version of fw
 - music?
 - pic service?
 - check in some other systems for opengl glitches
-- runnable from3 everywhere
-- skip pic,prev pic, pause slide, restore slide...
+- runnable from everywhere
+- skip pic, prev pic, pause slide, restore slide...
 - preload next pic in separate thread
