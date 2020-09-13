@@ -1,0 +1,69 @@
+{
+	"app": {
+		"default_font_filename": "akashi.ttf",
+		"default_font_size": 16,
+		"clock_font_filename": "alcubierre.otf",
+		"clock_font_size_percent": 10,
+		"clock_horizontal_margin_percent": 5,
+		"clock_vertical_margin_percent": 5,
+		"text_color_red": 255,
+		"text_color_green": 255,
+		"text_color_blue": 255,
+		"text_color_alpha": 255,
+		"seconds_between_pictures": 2,
+		"with_overlay": true,
+		"shuffle_pictures": false,
+		"letterbox_pictures": false,
+		"show_seconds": true,
+		"lazy_render": false
+	},
+	"audio": {
+		"audio_buffers": 1024,
+		"audio_channels": 16,
+		"audio_out": 2,
+		"audio_ratio": 44100,
+		"music_volume": 127,
+		"sound_volume": 127
+	},
+	"input": {
+		"down": [
+			0,
+			0,
+			81
+		],
+		"left": [
+			0,
+			0,
+			80
+		],
+		"right": [
+			0,
+			0,
+			79
+		],
+		"up": [
+			0,
+			0,
+			82
+		],
+		"space": [
+			0,
+			0,
+			44
+		]
+	},
+	"meta": {
+		"v": 1
+	},
+	"video": {
+		"double_buffer": 0,
+		"fullscreen": false,
+		"vsync": false,
+		"window_h_logical": 200,
+		"window_h_px": 200,
+		"window_show_cursor": false,
+		"window_title": "Ambient device",
+		"window_w_logical": 300,
+		"window_w_px": 300
+	}
+}
