@@ -1,6 +1,7 @@
 #include <controllers/ambient.h>
 #include <input/input.h>
 #include <app/size_calculator.h>
+#include <app/env.h>
 
 //TODO: Remove
 #include <tools/file_utils.h>
@@ -180,7 +181,7 @@ void controller_ambient::set_picture_text(const std::string& _txt) {
 void controller_ambient::setup_graphic_resources(const app::style& _style) {
 
 	//TODO: We should have a "texture_from_path"...
-	overlay_texture.reset(new ldv::texture{ldv::image{"~/.ambient-device/data/bitmap/overlay.png"}});
+	overlay_texture.reset(new ldv::texture{ldv::image{app::get_data_dir()+"bitmap/overlay.png"}});
 	overlay={*overlay_texture.get(),
 		{0,0, _style.get_container_box().w, overlay_texture->get_h()},
 		{0,0, overlay_texture->get_w(), overlay_texture->get_h()}
@@ -189,7 +190,7 @@ void controller_ambient::setup_graphic_resources(const app::style& _style) {
 	overlay.set_alpha(255);
 
 	//TODO: Fuck you.
-	overlay_hack_texture.reset(new ldv::texture{ldv::image{"~/.ambient-device/data/bitmap/overlay_hack.png"}});
+	overlay_hack_texture.reset(new ldv::texture{ldv::image{app::get_data_dir()+"bitmap/overlay_hack.png"}});
 }
 
 void controller_ambient::draw_overlay(ldv::screen& _screen) {

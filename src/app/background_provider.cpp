@@ -1,4 +1,5 @@
 #include <app/background_provider.h>
+#include <app/env.h>
 
 #include <fstream>
 #include <vector>
@@ -30,9 +31,9 @@ app::background background_provider::get() {
 
 void background_provider::load_defaults() {
 
-	std::ifstream f("~/.ambient-device/data/app/default_pics.dat");
+	std::ifstream f(app::get_data_dir()+std::string{"app/default_pics.dat"});
 	if(!f) {
-		throw std::runtime_error("unable to load default pictures from ~/.ambient-device/data/app/default_pics.dat");
+		throw std::runtime_error("unable to load default pictures from .ambient-device/data/app/default_pics.dat");
 	}
 
 	std::string line;
