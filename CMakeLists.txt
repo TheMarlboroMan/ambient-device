@@ -37,7 +37,12 @@ set_target_properties(dfw PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdfw.so)
 
 add_executable(ambient-device src/main.cpp ${SOURCE})
 target_link_libraries(ambient-device dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL stdc++fs)
-set_target_properties(ambient-device PROPERTIES RUNTIME_OUTPUT_DIRECTORY build)
-add_custom_command(TARGET ambient-device POST_BUILD COMMAND mkdir -p ./build/logs ./build/data)
-add_custom_command(TARGET ambient-device POST_BUILD COMMAND cp -r ../resources/* ./build/data)
+#set_target_properties(ambient-device PROPERTIES RUNTIME_OUTPUT_DIRECTORY build)
+
+#TODO: This is not cool.
+add_custom_command(TARGET ambient-device POST_BUILD COMMAND mkdir -p ~/.ambient-device/logs ~/.ambient-device/data)
+add_custom_command(TARGET ambient-device POST_BUILD COMMAND cp -r ../resources/* ~/.ambient-device/data)
+
+install(TARGETS ambient-device RUNTIME DESTINATION /usr/local/bin)
+
 

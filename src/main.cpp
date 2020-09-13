@@ -13,13 +13,13 @@ int main(int argc, char ** argv)
 
 	//Init libdansdl2 log.
 	ldt::log_lsdl::set_type(ldt::log_lsdl::types::file);
-	ldt::log_lsdl::set_filename("logs/libdansdl2.log");
+	ldt::log_lsdl::set_filename("~/.ambient-device/logs/libdansdl2.log");
 
 	//Argument controller.
 	tools::arg_manager carg(argc, argv);
 
 	//Init application log.
-	lm::file_logger log_app{"logs/app.log"};
+	lm::file_logger log_app{"~/.ambient-device/logs/app.log"};
 	lm::log(log_app, lm::lvl::info)<<"starting main process..."<<std::endl;
 
 	//Init...

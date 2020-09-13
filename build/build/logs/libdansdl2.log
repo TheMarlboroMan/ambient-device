@@ -1,5 +1,0 @@
-(2020-09-13 14:15:16) [info] set_cursor_visible 0
-(2020-09-13 14:15:16) [info] set_vsync 0
-(2020-09-13 14:15:16) [info] Init audio controller with 16 channels, 1024 buffers, 2 outputs and a ratio of 44100
-(2020-09-13 14:15:16) [info] Starting sdl audio subsystem.
-(2020-09-13 14:15:16) [info] Starting sdl mixer and setting callback function.

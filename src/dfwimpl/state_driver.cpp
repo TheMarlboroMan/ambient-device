@@ -213,7 +213,7 @@ void state_driver::manage_graphic_resources() {
 	));
 
 	//Finally, we can register fonts.
-	const std::string font_path="data/fonts/",
+	const std::string font_path="~/.ambient-device/data/fonts/",
 		idle_font_path=font_path+config.string_from_path("app:default_font_filename"),
 		clock_font_path=font_path+config.string_from_path("app:clock_font_filename");
 
