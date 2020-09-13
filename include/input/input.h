@@ -11,7 +11,8 @@ up,
 down,
 left,
 right,
-space
+space,
+pause
 	};
 
 };

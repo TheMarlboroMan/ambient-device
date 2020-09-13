@@ -10,7 +10,7 @@
 		"text_color_green": 255,
 		"text_color_blue": 255,
 		"text_color_alpha": 255,
-		"seconds_between_pictures": 2,
+		"seconds_between_pictures": 10,
 		"with_overlay": true,
 		"shuffle_pictures": false,
 		"letterbox_pictures": false,
@@ -50,6 +50,11 @@
 			0,
 			0,
 			44
+		],
+		"pause": [
+			0,
+			0,
+			19
 		]
 	},
 	"meta": {

@@ -49,18 +49,28 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 		return;
 	}
 
-	if(_input.is_input_down(input_app::space) ) {
+	if(_input.is_input_down(input_app::left)) {
 
-		set_state(t_states::state_idle);
+		background_provider.prev();
+		load_new_image();
 	}
+	else if(_input.is_input_down(input_app::right)) {
 
-	if(
+		background_provider.next();
+		load_new_image();
+	} else if(_input.is_input_down(input_app::pause)) {
+
+		paused=!paused;
+		update_text();
+	}	
+	else if(	
 			_input().is_event_keyboard_down()
 		|| _input().is_event_mouse_button_down()
 //TODO: Fuck you... This doesn't work...
 //		|| _input().is_event_mouse_movement()
 	) {
 		set_state(t_states::state_idle);
+		return;
 	}
 
 
@@ -78,9 +88,12 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 	}
 
 //TODO: I wish the clock could take care of this too...
+//TODO: The calculations for stamp and now and stuff would mostly be broken now.
+
 	auto now=std::time(nullptr);
-	if(now-stamp >= seconds_between_pictures) {
+	if(!paused && now-stamp >= seconds_between_pictures) {
 		stamp=now;
+		background_provider.next();
 		load_new_image();
 	}
 }
@@ -121,13 +134,14 @@ void controller_ambient::load_new_image() {
 
 	auto bg=background_provider.get();
 
-		//TODO: This should actually be a thread....
+	//TODO: This should actually be a thread....
 	try {
 		ldv::image img{bg.get_path()};
 		bg_texture.reset(new ldv::texture(img));
 	}
 	catch(std::exception& e) {
 
+		//TODO: should skip, see if any pic can be loaded...
 		lm::log(log, lm::lvl::warning)<<"Could not load picture: "<<e.what()<<std::endl;
 		return;
 	}
@@ -152,8 +166,26 @@ void controller_ambient::load_new_image() {
 	background.set_location({pos.x, pos.y, pos.w, pos.h});
 	background.set_clip({clip.x, clip.y, clip.w, clip.h});
 
+	update_text();
+	update_view=true;
+}
+
+void controller_ambient::update_text() {
+
+	auto bg=background_provider.get();
+	
 	//Set the author, date and description of the pics too..
 	std::string txt=bg.get_description()+" by "+bg.get_author()+", "+bg.get_date();
+
+	//TODO: This should be a configuration parameter.
+	txt+=" "+std::to_string(background_provider.get_index()+1)+" / "+std::to_string(background_provider.size());	
+
+	//TODO: Do this better, draw a symbol somewhere...
+	if(paused) {
+
+		txt+=" (paused)";
+	}
+
 	set_picture_text(txt);
 
 	update_view=true;

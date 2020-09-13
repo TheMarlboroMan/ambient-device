@@ -17,6 +17,15 @@ class background_provider {
 	//!Returns a background image instance.
 	background						get();
 
+	std::size_t						get_index() const {return index;}
+	std::size_t						size() const {return defaults.size();}
+
+	//!Advances the current index (wraps around)
+	void							next();
+
+	//!Decrements the current index (wraps around).
+	void							prev();
+
 	private:
 
 	void							load_defaults();
