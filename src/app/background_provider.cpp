@@ -30,9 +30,9 @@ app::background background_provider::get() {
 
 void background_provider::load_defaults() {
 
-	std::ifstream f("data/app/default_pics.dat");
+	std::ifstream f("~/.ambient-device/data/app/default_pics.dat");
 	if(!f) {
-		throw std::runtime_error("unable to load default pictures from data/app/default_pics.dat");
+		throw std::runtime_error("unable to load default pictures from ~/.ambient-device/data/app/default_pics.dat");
 	}
 
 	std::string line;

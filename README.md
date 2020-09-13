@@ -37,3 +37,17 @@ TODO
 - skip pic, prev pic, pause slide, restore slide...
 - preload next pic in separate thread
 - pic count (N/M)
+- Add an option to letterbox (instead of growing/shrinking).
+- Fix the overlay bug in the library.
+- Add configurable refresh time when lazy rendering.
+- Do something with the title screen.
+	- Add the time.
+	- Make it smaller.
+	- Add a title.
+- Fix user interaction in ambient controller
+	- Can it be something with the change of controller in the library???.
+- Fix all TODO in code.
+- Do real image resize using imagemagick (optional compilation flags)
+	- This would help with the "out of juice" thing.
+- Load images in separate thread
+- Use remote service for images
