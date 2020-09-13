@@ -1,6 +1,8 @@
 #include "../include/dfwimpl/app_config.h"
 #include "../include/dfwimpl/state_driver.h"
 
+#include <app/env.h>
+
 #include <dfw/kernel.h>
 #include <lm/sentry.h>
 
@@ -13,13 +15,14 @@ int main(int argc, char ** argv)
 
 	//Init libdansdl2 log.
 	ldt::log_lsdl::set_type(ldt::log_lsdl::types::file);
-	ldt::log_lsdl::set_filename("~/.ambient-device/logs/libdansdl2.log");
+	ldt::log_lsdl::set_filename(app::get_log_dir()+"libdansdl2.log");
 
 	//Argument controller.
 	tools::arg_manager carg(argc, argv);
 
 	//Init application log.
-	lm::file_logger log_app{"~/.ambient-device/logs/app.log"};
+	const std::string app_log_file=app::get_log_dir()+std::string{"app.log"};
+	lm::file_logger log_app{app_log_file.c_str()};
 	lm::log(log_app, lm::lvl::info)<<"starting main process..."<<std::endl;
 
 	//Init...

@@ -1,4 +1,5 @@
 #include <dfwimpl/state_driver.h>
+#include <app/env.h>
 
 #include <input/input.h>
 #include <controllers/states.h>
@@ -213,7 +214,7 @@ void state_driver::manage_graphic_resources() {
 	));
 
 	//Finally, we can register fonts.
-	const std::string font_path="~/.ambient-device/data/fonts/",
+	const std::string font_path=app::get_data_dir()+"fonts/",
 		idle_font_path=font_path+config.string_from_path("app:default_font_filename"),
 		clock_font_path=font_path+config.string_from_path("app:clock_font_filename");
 
