@@ -62,7 +62,7 @@ void background_provider::load_defaults() {
 			throw std::runtime_error("invalid default pictures line '"+line+"'");
 		}
 
-		defaults.push_back({pieces[0], pieces[1], pieces[2], pieces[3]});
+		defaults.push_back({app::get_pic_dir()+pieces[0], pieces[1], pieces[2], pieces[3]});
 	}
 
 	if(!defaults.size()) {
