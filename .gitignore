@@ -5,3 +5,4 @@ logs/*
 *.dll
 makefile
 .vscode
+resources/pics
