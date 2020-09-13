@@ -45,6 +45,7 @@ class controller_ambient:
 
 	void						update_clock();
 	void						load_new_image();
+	void						update_text();
 	void						setup_text_resources();
 	void						setup_graphic_resources(const app::style&);
 	void						set_picture_text(const std::string&);
@@ -65,6 +66,7 @@ class controller_ambient:
 									lazy_render,
 									letterbox_pictures;
 	time_t							stamp;
+	bool							paused=false;
 	int								seconds_between_pictures,
 									clock_margin_horizontal,
 									clock_margin_vertical;

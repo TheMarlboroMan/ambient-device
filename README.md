@@ -25,18 +25,13 @@ TODO
 
 ## TODO
 
-- segmentation violation when showing seconds
 - crash when loading invalid pic, better to skip and detect infinite bad loop.
 - config menu
 - pic crossfade (optional)
-- update source to new version of fw
 - music?
 - pic service?
 - check in some other systems for opengl glitches
-- runnable from everywhere
-- skip pic, prev pic, pause slide, restore slide...
 - preload next pic in separate thread
-- pic count (N/M)
 - Add an option to letterbox (instead of growing/shrinking).
 - Fix the overlay bug in the library.
 - Add configurable refresh time when lazy rendering.

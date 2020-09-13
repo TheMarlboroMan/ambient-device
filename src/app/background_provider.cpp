@@ -18,15 +18,21 @@ background_provider::background_provider(bool _shuffle)
 
 app::background background_provider::get() {
 
-	auto result=defaults[index];
-	if(++index >= defaults.size()-1) {
-		index=0;
-		if(shuffle) {
-			shuffle_contents();
-		}
-	}
+	return defaults[index];
+}
 
-	return result;
+void background_provider::prev() {
+
+	index=index==0 
+		? defaults.size() -1
+		: index-1;
+}
+
+void background_provider::next() {
+
+	index=index==defaults.size() -1 
+		? 0
+		: index+1;
 }
 
 void background_provider::load_defaults() {
@@ -59,6 +65,7 @@ void background_provider::load_defaults() {
 		}
 
 		if(4!=pieces.size()) {
+			//TODO: Should just log and go on ahead.
 			throw std::runtime_error("invalid default pictures line '"+line+"'");
 		}
 
