@@ -15,6 +15,7 @@
 		"shuffle_pictures": false,
 		"letterbox_pictures": false,
 		"show_seconds": true,
+		"show_picture_counter": true,
 		"lazy_render": false
 	},
 	"audio": {

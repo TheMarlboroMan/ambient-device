@@ -18,6 +18,7 @@ controller_ambient::controller_ambient(lm::logger& _log,
 	:log(_log)
 	, with_overlay(_app_config.bool_from_path("app:with_overlay"))
 	, show_seconds(_app_config.bool_from_path("app:show_seconds"))
+	, show_picture_counter(_app_config.bool_from_path("app::show_picture_counter"))
 	, lazy_render(_app_config.bool_from_path("app:lazy_render"))
 	, letterbox_pictures(_app_config.bool_from_path("app:letterbox_pictures"))
 	, seconds_between_pictures{_app_config.int_from_path("app:seconds_between_pictures")}
@@ -62,8 +63,8 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 
 		paused=!paused;
 		update_text();
-	}	
-	else if(	
+	}
+	else if(
 			_input().is_event_keyboard_down()
 		|| _input().is_event_mouse_button_down()
 //TODO: Fuck you... This doesn't work...
@@ -173,12 +174,14 @@ void controller_ambient::load_new_image() {
 void controller_ambient::update_text() {
 
 	auto bg=background_provider.get();
-	
+
 	//Set the author, date and description of the pics too..
 	std::string txt=bg.get_description()+" by "+bg.get_author()+", "+bg.get_date();
 
-	//TODO: This should be a configuration parameter.
-	txt+=" "+std::to_string(background_provider.get_index()+1)+" / "+std::to_string(background_provider.size());	
+	if(show_picture_counter) {
+
+		txt+=" "+std::to_string(background_provider.get_index()+1)+" / "+std::to_string(background_provider.size());
+	}
 
 	//TODO: Do this better, draw a symbol somewhere...
 	if(paused) {

@@ -63,6 +63,7 @@ class controller_ambient:
 	bool							update_view=true,
 									with_overlay,
 									show_seconds,
+									show_picture_counter,
 									lazy_render,
 									letterbox_pictures;
 	time_t							stamp;
