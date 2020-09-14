@@ -32,17 +32,20 @@ int main(int argc, char ** argv)
 			throw std::runtime_error("unable to init sdl2");
 		}
 
-		lm::log(log_app, lm::lvl::info)<<"creating kernel..."<<std::endl;
-		dfw::kernel kernel(log_app, carg);
+		{
+			lm::log(log_app, lm::lvl::info)<<"creating kernel..."<<std::endl;
+			dfw::kernel kernel(log_app, carg);
 
-		lm::log(log_app, lm::lvl::info)<<"init app config..."<<std::endl;
-		app_config config;
+			lm::log(log_app, lm::lvl::info)<<"init app config..."<<std::endl;
+			app_config config;
 
-		lm::log(log_app, lm::lvl::info)<<"create state driver..."<<std::endl;
-		state_driver sd(kernel, config);
+			lm::log(log_app, lm::lvl::info)<<"create state driver..."<<std::endl;
+			state_driver sd(kernel, config);
 
-		lm::log(log_app, lm::lvl::info)<<"init state driver..."<<std::endl;
-		sd.init(kernel);
+			lm::log(log_app, lm::lvl::info)<<"init state driver..."<<std::endl;
+			sd.init(kernel);
+		} //Make sure the kernel is destroyed before sdl_shutdown is called, so
+		//kernel memory can be freed using SDL functions...
 
 		lm::log(log_app, lm::lvl::info)<<"finish main proccess"<<std::endl;
 
