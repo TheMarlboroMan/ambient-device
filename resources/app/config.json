@@ -13,7 +13,7 @@
 		"seconds_between_pictures": 60,
 		"with_vignette": true,
 		"shuffle_pictures": true,
-		"letterbox_pictures": false,
+		"letterbox_pictures": true,
 		"show_seconds": false,
 		"show_picture_counter": false,
 		"lazy_render": false
