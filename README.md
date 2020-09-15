@@ -23,16 +23,16 @@ TODO
 - Q: My picture is sideways!!
 - A: The program does nothing with EXIF data (which stores the way the camera was oriented). Please, rotate it manually.
 
+## BUGS
+
+- Letterboxing seems to do nothing.
+
 ## TODO
 
-- crash when loading invalid pic, better to skip and detect infinite bad loop.
 - config menu
+- crash when loading invalid pic, better to skip and detect infinite bad loop.
 - pic crossfade (optional)
 - music?
-- check in some other systems for opengl glitches
-- preload next pic in separate thread
-- Add an option to letterbox (instead of growing/shrinking).
-- Fix the overlay bug in the library.
 - Add configurable refresh time when lazy rendering.
 - Do something with the title screen.
 	- Make it smaller.

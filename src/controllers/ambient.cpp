@@ -138,7 +138,6 @@ void controller_ambient::load_new_image() {
 
 	auto bg=background_provider.get();
 
-	//TODO: This should actually be a thread....
 	try {
 		ldv::image img{bg.get_path()};
 		bg_texture.reset(new ldv::texture(img));
@@ -155,6 +154,8 @@ void controller_ambient::load_new_image() {
 
 	app::size_calculator calc;
 	app::rect pos, clip;
+
+
 
 	void(app::size_calculator::*fnptr)(rect, rect, rect&, rect&)=letterbox_pictures
 		? &app::size_calculator::letterbox
