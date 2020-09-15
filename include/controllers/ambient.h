@@ -60,8 +60,7 @@ class controller_ambient:
 
 	//properties
 	std::unique_ptr<ldv::texture>   bg_texture,
-	                                overlay_texture,
-	                                overlay_hack_texture;
+	                                vignette_texture;
 	bool                            update_view=true,
 	                                with_vignette,
 	                                show_seconds,

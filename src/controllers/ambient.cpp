@@ -218,30 +218,26 @@ void controller_ambient::set_picture_text(const std::string& _txt) {
 void controller_ambient::setup_graphic_resources(const app::style& _style) {
 
 	//TODO: We should have a "texture_from_path"...
-	overlay_texture.reset(new ldv::texture{ldv::image{app::get_data_dir()+"bitmap/overlay.png"}});
-	overlay={*overlay_texture.get(),
-		{0,0, _style.get_container_box().w, overlay_texture->get_h()},
-		{0,0, overlay_texture->get_w(), overlay_texture->get_h()}
+	vignette_texture.reset(new ldv::texture{ldv::image{app::get_data_dir()+"bitmap/overlay.png"}});
+	overlay={*vignette_texture.get(),
+		{0,0, _style.get_container_box().w, vignette_texture->get_h()},
+		{0,0, vignette_texture->get_w(), vignette_texture->get_h()}
 	};
+	overlay.set_texture(*vignette_texture.get());
 	overlay.set_blend(ldv::representation::blends::alpha);
 	overlay.set_alpha(255);
-
-	//TODO: Fuck you.
-	overlay_hack_texture.reset(new ldv::texture{ldv::image{app::get_data_dir()+"bitmap/overlay_hack.png"}});
 }
 
 void controller_ambient::draw_vignette(ldv::screen& _screen) {
 
-	//TODO: Fuck you....
-	overlay.set_texture(*overlay_texture.get());
+	overlay.set_invert_vertical(false);
 	overlay.align(display_box, {
 		ldv::representation_alignment::h::inner_left,
 		ldv::representation_alignment::v::inner_top
 	});
 	overlay.draw(_screen);
 
-	//TODO: I should just rotate it, right?
-	overlay.set_texture(*overlay_hack_texture.get());
+	overlay.set_invert_vertical(true);
 	overlay.align(display_box, {
 		ldv::representation_alignment::h::inner_left,
 		ldv::representation_alignment::v::inner_bottom,
