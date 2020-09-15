@@ -3,42 +3,48 @@
 #include <app/size_calculator.h>
 #include <app/env.h>
 
-//TODO: Remove
-#include <tools/file_utils.h>
 #include <tools/string_utils.h>
 
 #include <lm/sentry.h>
 
 using namespace app;
 
-controller_ambient::controller_ambient(lm::logger& _log,
+controller_ambient::controller_ambient(
+	lm::logger& _log,
 	ldtools::ttf_manager& _ttf_manager,
 	const app::app_config& _app_config,
-	const app::style& _style)
-	:log(_log)
-	, with_overlay(_app_config.bool_from_path("app:with_overlay"))
-	, show_seconds(_app_config.bool_from_path("app:show_seconds"))
-	, show_picture_counter(_app_config.bool_from_path("app::show_picture_counter"))
-	, lazy_render(_app_config.bool_from_path("app:lazy_render"))
-	, letterbox_pictures(_app_config.bool_from_path("app:letterbox_pictures"))
-	, seconds_between_pictures{_app_config.int_from_path("app:seconds_between_pictures")}
-	, clock_margin_horizontal{_style.get_clock_horizontal_margin()}
-	, clock_margin_vertical{_style.get_clock_vertical_margin()}
-	, display_box{_style.get_container_box()}
-	, clock_rep{
+	const app::style& _style,
+	app::clock& _clock
+)
+	:log(_log),
+	clock{_clock},
+	with_vignette(_app_config.bool_from_path("app:with_vignette")),
+	show_seconds(_app_config.bool_from_path("app:show_seconds")),
+	show_picture_counter(_app_config.bool_from_path("app:show_picture_counter")),
+	lazy_render(_app_config.bool_from_path("app:lazy_render")),
+	letterbox_pictures(_app_config.bool_from_path("app:letterbox_pictures")),
+	seconds_between_pictures{_app_config.int_from_path("app:seconds_between_pictures")},
+	clock_margin_horizontal{_style.get_clock_horizontal_margin()},
+	clock_margin_vertical{_style.get_clock_vertical_margin()},
+	display_box{_style.get_container_box()},
+	clock_rep{
 		_ttf_manager.get("clockfont", _style.get_clock_font_size()),
 		_style.get_clock_font_color(),
-		"00:00"
-	}
-	, pic_info_rep{
+		clock.get_time(show_seconds)
+	},
+	pic_info_rep{
 		_ttf_manager.get("textfont", _style.get_secondary_font_size()),
 		_style.get_secondary_font_color(),
 		"..."
-	}, background_provider(_app_config.bool_from_path("app:shuffle_pictures"))
-	{
+	},
+	background_provider(_app_config.bool_from_path("app:shuffle_pictures"))
+{
 
 	setup_text_resources();
 	setup_graphic_resources(_style);
+
+	_clock.subscribe_second("ambient_second_tick", std::bind(&controller_ambient::second_tick, this));
+	_clock.subscribe_minute("ambient_minute_tick", std::bind(&controller_ambient::minute_tick, this));
 
 	stamp=std::time(nullptr);
 }
@@ -48,6 +54,12 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 	if(_input().is_exit_signal() || _input.is_input_down(input_app::escape)) {
 		set_leave(true);
 		return;
+	}
+
+	if(update_clock) {
+
+		update_clock_text();
+		update_clock=false;
 	}
 
 	if(_input.is_input_down(input_app::left)) {
@@ -63,6 +75,12 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 
 		paused=!paused;
 		update_text();
+
+		//unpause restores the stamp.
+		if(!paused) {
+
+			stamp=std::time(nullptr);
+		}
 	}
 	else if(
 			_input().is_event_keyboard_down()
@@ -74,22 +92,7 @@ void controller_ambient::loop(dfw::input& _input, const dfw::loop_iteration_data
 		return;
 	}
 
-
-	//TODO: No, no, no, here's what we do: make a better clock, property of
-	//the state driver. Pass it around, tick it on the state driver itself
-	//or even have a thread to tick it if you feel like that... Then feed the
-	//clock with meaningful intervals and signals it can answer to. We should
-	//be able to ask it for "seconds" and "minutes", but also for "notify me
-	//in 25 seconds, label it 'blah'" and then ask "has 'blah' happened yet"?
-
-	if(clock.has_changed(std::time(nullptr), show_seconds)) {
-
-		lm::log(log, lm::lvl::info)<<" clock change..."<<std::endl;
-		update_clock();
-	}
-
 //TODO: I wish the clock could take care of this too...
-//TODO: The calculations for stamp and now and stuff would mostly be broken now.
 
 	auto now=std::time(nullptr);
 	if(!paused && now-stamp >= seconds_between_pictures) {
@@ -113,8 +116,8 @@ void controller_ambient::draw(ldv::screen& screen, int /*fps*/) {
 
 	background.draw(screen);
 
-	if(with_overlay) {
-		draw_overlay(screen);
+	if(with_vignette) {
+		draw_vignette(screen);
 	}
 
 	clock_rep.draw(screen);
@@ -128,7 +131,7 @@ void controller_ambient::awake(dfw::input&) {
 	}
 
 	stamp=std::time(nullptr);
-	update_clock();
+	update_clock_text();
 }
 
 void controller_ambient::load_new_image() {
@@ -194,9 +197,8 @@ void controller_ambient::update_text() {
 	update_view=true;
 }
 
-void controller_ambient::update_clock() {
+void controller_ambient::update_clock_text() {
 
-	clock.update_time();
 	clock_rep.set_text(clock.get_time(show_seconds));
 	update_view=true;
 }
@@ -228,7 +230,7 @@ void controller_ambient::setup_graphic_resources(const app::style& _style) {
 	overlay_hack_texture.reset(new ldv::texture{ldv::image{app::get_data_dir()+"bitmap/overlay_hack.png"}});
 }
 
-void controller_ambient::draw_overlay(ldv::screen& _screen) {
+void controller_ambient::draw_vignette(ldv::screen& _screen) {
 
 	//TODO: Fuck you....
 	overlay.set_texture(*overlay_texture.get());
@@ -238,7 +240,7 @@ void controller_ambient::draw_overlay(ldv::screen& _screen) {
 	});
 	overlay.draw(_screen);
 
-	//TODO: A single stupid line appears... Check the implementation.
+	//TODO: I should just rotate it, right?
 	overlay.set_texture(*overlay_hack_texture.get());
 	overlay.align(display_box, {
 		ldv::representation_alignment::h::inner_left,
@@ -269,4 +271,26 @@ void controller_ambient::align_view() {
 			ldv::representation_alignment::v::outer_bottom,
 		}
 	);
+}
+
+void controller_ambient::second_tick() {
+
+	if(!show_seconds) {
+
+		return;
+	}
+
+	//This is called from another thread. Let us not even try to update an openGl texture here.
+	update_clock=true;
+}
+
+void controller_ambient::minute_tick() {
+
+	if(show_seconds) {
+
+		return;
+	}
+
+	//See second_tick.
+	update_clock=true;
 }

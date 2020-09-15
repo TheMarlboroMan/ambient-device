@@ -36,7 +36,7 @@ set_target_properties(dfw PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdfw.so)
 #Configure the executable, we want it into the "build directory" and we want all resources copied to the build directory.
 
 add_executable(ambient-device src/main.cpp ${SOURCE})
-target_link_libraries(ambient-device dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL stdc++fs)
+target_link_libraries(ambient-device dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL stdc++fs -pthread)
 #set_target_properties(ambient-device PROPERTIES RUNTIME_OUTPUT_DIRECTORY build)
 
 #TODO: This is not cool.

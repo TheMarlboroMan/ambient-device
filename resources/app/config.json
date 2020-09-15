@@ -10,12 +10,12 @@
 		"text_color_green": 255,
 		"text_color_blue": 255,
 		"text_color_alpha": 255,
-		"seconds_between_pictures": 10,
-		"with_overlay": true,
-		"shuffle_pictures": false,
+		"seconds_between_pictures": 60,
+		"with_vignette": true,
+		"shuffle_pictures": true,
 		"letterbox_pictures": false,
-		"show_seconds": true,
-		"show_picture_counter": true,
+		"show_seconds": false,
+		"show_picture_counter": false,
 		"lazy_render": false
 	},
 	"audio": {

@@ -11,7 +11,8 @@
 
 //std
 #include <algorithm>
-
+#include <chrono>
+#include <thread>
 
 using namespace app;
 
@@ -44,6 +45,8 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 
 	lm::log(log, lm::lvl::info)<<"virtualizing input..."<<std::endl;
 	virtualize_input(kernel.get_input());
+
+	clock.start();
 
 	lm::log(log, lm::lvl::info)<<"state driver fully constructed"<<std::endl;
 }
@@ -111,8 +114,8 @@ void state_driver::register_controllers(dfw::kernel& /*_kernel*/) {
 		register_controller(_i, *_ptr);
 	};
 
-	reg(c_ambient, t_states::state_ambient, new controller_ambient(log, ttf_manager, config, *style.get()));
-	reg(c_idle, t_states::state_idle, new controller_idle(log, ttf_manager, config, *style.get()));
+	reg(c_ambient, t_states::state_ambient, new controller_ambient(log, ttf_manager, config, *style.get(), clock));
+	reg(c_idle, t_states::state_idle, new controller_idle(log, ttf_manager, config, *style.get(), clock));
 	//register controllers here.
 }
 
