@@ -41,7 +41,7 @@ target_link_libraries(ambient-device dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf 
 
 #TODO: This is not cool.
 add_custom_command(TARGET ambient-device POST_BUILD COMMAND mkdir -p ~/.ambient-device/logs ~/.ambient-device/data)
-add_custom_command(TARGET ambient-device POST_BUILD COMMAND cp -r ../resources/* ~/.ambient-device/data)
+add_custom_command(TARGET ambient-device POST_BUILD COMMAND cp -r ../resources/* ~/.ambient-device/data/)
 
 install(TARGETS ambient-device RUNTIME DESTINATION /usr/local/bin)
 

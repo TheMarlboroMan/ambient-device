@@ -1,0 +1,61 @@
+{
+	"menu":
+		{
+			"properties":{
+				"wrap": true
+			},
+			"entries":[
+			{
+				"type":"int",
+				"key":"10_seconds_between_pictures",
+				"properties" : {
+					"wrap":true,
+					"min": 5,
+					"max": 300
+				}
+			},
+			{
+				"type":"bool",
+				"key":"20_shuffle_pictures",
+				"properties": {
+					"wrap":true
+				}
+			},
+			{
+				"type":"bool",
+				"key":"30_with_vignette",
+				"properties": {
+					"wrap":true
+				}
+			},
+			{
+				"type":"bool",
+				"key":"40_letterbox_pictures",
+				"properties": {
+					"wrap":true
+				}
+			},
+			{
+				"type":"bool",
+				"key":"50_show_seconds",
+				"properties": {
+					"wrap":true
+				}
+			},
+			{
+				"type":"bool",
+				"key":"60_show_picture_counter",
+				"properties": {
+					"wrap":true
+				}
+			},
+			{
+				"type":"bool",
+				"key":"70_lazy_render",
+				"properties": {
+					"wrap":true
+				}
+			}
+		]
+	}
+}
