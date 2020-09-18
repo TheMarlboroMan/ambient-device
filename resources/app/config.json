@@ -65,11 +65,11 @@
 		"double_buffer": 0,
 		"fullscreen": false,
 		"vsync": false,
-		"window_h_logical": 200,
-		"window_h_px": 200,
+		"window_h_logical": 300,
+		"window_h_px": 300,
 		"window_show_cursor": false,
 		"window_title": "Ambient device",
-		"window_w_logical": 300,
-		"window_w_px": 300
+		"window_w_logical": 600,
+		"window_w_px": 600
 	}
 }

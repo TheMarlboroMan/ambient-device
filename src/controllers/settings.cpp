@@ -13,7 +13,7 @@ using namespace app;
 controller_settings::controller_settings(
 	lm::logger& _log,
 	ldtools::ttf_manager& _ttf_manager,
-	const app::app_config& _app_config,
+	app::app_config& _app_config,
 	const app::style& _style
 ):
 	log(_log),
@@ -35,7 +35,13 @@ controller_settings::controller_settings(
 		menu
 	);
 
-	
+	menu.set("10_seconds_between_pictures", _app_config.int_from_path("app:seconds_between_pictures"));
+	menu.set("20_shuffle_pictures", _app_config.bool_from_path("app:shuffle_pictures"));
+	menu.set("30_with_vignette", _app_config.bool_from_path("app:with_vignette"));
+	menu.set("40_letterbox_pictures", _app_config.bool_from_path("app:letterbox_pictures"));
+	menu.set("50_show_seconds", _app_config.bool_from_path("app:show_seconds"));
+	menu.set("60_show_picture_counter", _app_config.bool_from_path("app:show_picture_counter"));
+	menu.set("70_lazy_render", _app_config.bool_from_path("app:lazy_render"));
 }
 
 void controller_settings::loop(dfw::input& _input, const dfw::loop_iteration_data& /*lid*/) {
@@ -45,11 +51,25 @@ void controller_settings::loop(dfw::input& _input, const dfw::loop_iteration_dat
 		return;
 	}
 
-//adjacent_key(const tkey& _key, browse_dir _dir) const {
-//browse(const tkey& _key, browse_dir _dir) {
-//get_int
-//get_bool
+	if(_input.is_input_down(input_app::down)) {
 
+		current_key=menu.adjacent_key(current_key, decltype(menu)::browse_dir::next);
+	}
+	else if(_input.is_input_down(input_app::up)) {
+
+		current_key=menu.adjacent_key(current_key, decltype(menu)::browse_dir::previous);
+	}
+
+	if(_input.is_input_down(input_app::right)) {
+
+		menu.browse(current_key, decltype(menu)::browse_dir::next);
+		save_config();
+	}
+	else if(_input.is_input_down(input_app::left)) {
+
+		menu.browse(current_key, decltype(menu)::browse_dir::previous);
+		save_config();
+	}
 }
 
 void controller_settings::draw(ldv::screen& _screen, int /*fps*/) {
@@ -68,7 +88,7 @@ void controller_settings::draw(ldv::screen& _screen, int /*fps*/) {
 	int y=10;
 
 	auto align_rect=_screen.get_rect();
-	align_rect.w/=2;
+	align_rect.w=(align_rect.w / 4) * 3; //Three thirds of the display width.
 
 	for(const auto& key : menu.get_keys()) {
 
@@ -115,3 +135,14 @@ void controller_settings::draw(ldv::screen& _screen, int /*fps*/) {
 	}
 }
 
+void controller_settings::save_config() {
+
+	config.set("app:seconds_between_pictures", menu.get_int("10_seconds_between_pictures"));
+	config.set("app:shuffle_pictures", menu.get_bool("20_shuffle_pictures"));
+	config.set("app:with_vignette", menu.get_bool("30_with_vignette"));
+	config.set("app:letterbox_pictures", menu.get_bool("40_letterbox_pictures"));
+	config.set("app:show_seconds", menu.get_bool("50_show_seconds"));
+	config.set("app:show_picture_counter", menu.get_bool("60_show_picture_counter"));
+	config.set("app:lazy_render", menu.get_bool("70_lazy_render"));
+	config.save();
+}
