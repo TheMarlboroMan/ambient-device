@@ -9,12 +9,6 @@ double size_calculator::ratio(double _w, double _h) const {
 	return _w / _h;
 }
 
-//TODO: Look, same implementation as ratio XD!.
-double size_calculator::scale_factor(double _a, double _b) const {
-
-	return _a / _b;
-}
-
 //!Calculates the _pos and _clip of a picture so it fills the full canvas (
 //!wich would be the display).
 void size_calculator::fill(rect _pic, rect _canvas, rect& _pos, rect& _clip) {
@@ -33,7 +27,7 @@ void size_calculator::fill(rect _pic, rect _canvas, rect& _pos, rect& _clip) {
 		int &_clip_pos,
 		int &_clip_cross_pos
 	) {
-		double scale=scale_factor(_pic_dim, _canvas_dim);
+		double scale=ratio(_pic_dim, _canvas_dim);
 		unsigned display_cross_dim=_canvas_cross_dim * scale;
 
 		//Clipping to full dimension... The cross dimension? The display one.
@@ -72,45 +66,24 @@ void size_calculator::letterbox(rect _pic, rect _canvas, rect& _pos, rect& _clip
 	//pics we want the pic width to be scaled to the display width and the
 	//height to adapt.
 
-	double 	image_ratio=ratio(_pic.w, _pic.h),
-			display_ratio=ratio(_canvas.w, _canvas.h);
+	double 	display_ratio=ratio(_canvas.w, _canvas.h),
+			image_ratio=ratio(_pic.w, _pic.h);
 
-	//Landscape pictures.
-	if(_pic.h < _pic.w) {
+	double scale=display_ratio > image_ratio
+		? ratio(_canvas.h, _pic.h)
+		: ratio(_canvas.w, _pic.w);
 
-std::cout<<"A landscape pic"<<std::endl;
+	_pos.w=(double) _pic.w * scale;
+	_pos.h=(double) _pic.h * scale;
 
-		_pos.x=0;
-		_pos.w=_canvas.w;
-
-		if(image_ratio > display_ratio) {
-
-			double scale=scale_factor(_pic.h, _canvas.h);
-
-			//TODO: Nope, this is not good.
-
-			_pos.h=_canvas.h * scale;
-
-			std::cout<<"CALC"<<std::endl;
-			_pos.y=(_canvas.h - _pos.h) / 2;
-		}
-		else {
-
-			double scale=scale_factor(_pic.h, _canvas.h);
-			_pos.h=_canvas.h * scale;
-
-
-			std::cout<<"ZERO"<<std::endl;
-			_pos.y=0;
-		}
-	}
-	//Portrait pictures.
-	else {
+	//portrait
+	if(display_ratio > image_ratio) {
 		_pos.y=0;
-		_pos.h=_canvas.h;
-
-		double scale=scale_factor(_pic.w, _canvas.w);
-		_pos.w=_canvas.w * scale;
 		_pos.x=(_canvas.w - _pos.w) / 2;
+	}
+	//landscape
+	else {
+		_pos.y=(_canvas.h - _pos.h) / 2;
+		_pos.x=0;
 	}
 }

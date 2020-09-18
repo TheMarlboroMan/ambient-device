@@ -23,10 +23,6 @@ TODO
 - Q: My picture is sideways!!
 - A: The program does nothing with EXIF data (which stores the way the camera was oriented). Please, rotate it manually.
 
-## BUGS
-
-- Letterboxing seems to do nothing.
-
 ## TODO
 
 - config menu
