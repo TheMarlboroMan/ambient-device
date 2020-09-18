@@ -15,6 +15,8 @@
 //Controllers.
 #include <controllers/ambient.h>
 #include <controllers/idle.h>
+#include <controllers/settings.h>
+
 //new controller includes here.
 
 //std
@@ -59,6 +61,7 @@ class state_driver:
 	typedef std::unique_ptr<dfw::controller_interface>	ptr_controller;
 	ptr_controller              c_ambient;
 	ptr_controller              c_idle;
+	ptr_controller              c_settings;
 	//controller instances here.
 
 

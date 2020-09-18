@@ -47,7 +47,7 @@ void controller_idle::draw(ldv::screen& _screen, int /*fps*/) {
 
 	_screen.clear(ldv::rgba8(0, 0, 0, 0));
 
-	int font_size=style.get_idle_font_size();
+	const int font_size=style.get_idle_font_size();
 	assert(ttf_manager.exists("default", font_size));
 
 	ldv::ttf_representation user_prompt{

@@ -17,7 +17,8 @@
 using namespace app;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_idle),
+//	:state_driver_interface(t_states::state_idle),
+	:state_driver_interface(t_states::state_settings),
 	config(c), log(kernel.get_log()), kernel_ref(kernel) {
 
 	lm::log(log, lm::lvl::info)<<"setting state check function..."<<std::endl;
@@ -116,6 +117,7 @@ void state_driver::register_controllers(dfw::kernel& /*_kernel*/) {
 
 	reg(c_ambient, t_states::state_ambient, new controller_ambient(log, ttf_manager, config, *style.get(), clock));
 	reg(c_idle, t_states::state_idle, new controller_idle(log, ttf_manager, config, *style.get(), clock));
+	reg(c_settings, t_states::state_settings, new controller_settings(log, ttf_manager, config, *style.get()));
 	//register controllers here.
 }
 
