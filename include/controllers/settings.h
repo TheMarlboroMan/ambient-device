@@ -21,7 +21,7 @@ class controller_settings:
 
 	public:
 
-								controller_settings(lm::logger&, ldtools::ttf_manager&, const app::app_config&, const app::style&);
+								controller_settings(lm::logger&, ldtools::ttf_manager&, app::app_config&, const app::style&);
 	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input& /*input*/) {}
@@ -30,10 +30,12 @@ class controller_settings:
 
 	private:
 
+	void                        save_config();
+
 	//references...
 	lm::logger&                 log;
 	const ldtools::ttf_manager& ttf_manager;
-	const app::app_config&      config;
+	app::app_config&            config;
 	const app::style&           style;
 
 	//properties
