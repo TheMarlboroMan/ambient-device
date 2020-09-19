@@ -23,6 +23,7 @@ controller_settings::controller_settings(
 	current_key{"10_seconds_between_pictures"}
 {
 
+	//TODO: This is repeated.
 	std::string config_file_path=app::get_data_dir();
 				config_file_path+="app/menu.json";
 
@@ -31,17 +32,19 @@ controller_settings::controller_settings(
 	);
 
 	tools::options_menu_from_json(
-		json_document["menu"],
+		json_document["settings"],
 		menu
 	);
 
-	menu.set("10_seconds_between_pictures", _app_config.int_from_path("app:seconds_between_pictures"));
-	menu.set("20_shuffle_pictures", _app_config.bool_from_path("app:shuffle_pictures"));
-	menu.set("30_with_vignette", _app_config.bool_from_path("app:with_vignette"));
-	menu.set("40_letterbox_pictures", _app_config.bool_from_path("app:letterbox_pictures"));
-	menu.set("50_show_seconds", _app_config.bool_from_path("app:show_seconds"));
-	menu.set("60_show_picture_counter", _app_config.bool_from_path("app:show_picture_counter"));
-	menu.set("70_lazy_render", _app_config.bool_from_path("app:lazy_render"));
+	menu_translation["10_seconds_between_pictures"]="Seconds between pictures";
+	menu_translation["20_shuffle_pictures"]="Shuffle pictures";
+	menu_translation["30_with_vignette"]="With vignette";
+	menu_translation["40_letterbox_pictures"]="Letterbox pictures";
+	menu_translation["50_show_seconds"]="Show clock seconds";
+	menu_translation["60_show_picture_counter"]="Show picture counter";
+	menu_translation["70_lazy_render"]="Lazy rendering";
+	menu_translation["80_save_and_exit"]="Save and exit";
+	menu_translation["90_exit_without_saving"]="Exit without saving";
 }
 
 void controller_settings::loop(dfw::input& _input, const dfw::loop_iteration_data& /*lid*/) {
@@ -59,17 +62,39 @@ void controller_settings::loop(dfw::input& _input, const dfw::loop_iteration_dat
 
 		current_key=menu.adjacent_key(current_key, decltype(menu)::browse_dir::previous);
 	}
-
-	if(_input.is_input_down(input_app::right)) {
+	else if(_input.is_input_down(input_app::right)) {
 
 		menu.browse(current_key, decltype(menu)::browse_dir::next);
-		save_config();
 	}
 	else if(_input.is_input_down(input_app::left)) {
 
 		menu.browse(current_key, decltype(menu)::browse_dir::previous);
-		save_config();
 	}
+	else if(_input.is_input_down(input_app::space)) {
+
+		if(current_key=="80_save_and_exit") {
+
+			save_config();
+			set_state(t_states::state_idle);
+		}
+		else if(current_key=="90_exit_without_saving") {
+
+			set_state(t_states::state_idle);
+		}
+	}
+}
+
+void controller_settings::awake(dfw::input& /*input*/) {
+
+	menu.set("10_seconds_between_pictures", config.int_from_path("app:seconds_between_pictures"));
+	menu.set("20_shuffle_pictures", config.bool_from_path("app:shuffle_pictures"));
+	menu.set("30_with_vignette", config.bool_from_path("app:with_vignette"));
+	menu.set("40_letterbox_pictures", config.bool_from_path("app:letterbox_pictures"));
+	menu.set("50_show_seconds", config.bool_from_path("app:show_seconds"));
+	menu.set("60_show_picture_counter", config.bool_from_path("app:show_picture_counter"));
+	menu.set("70_lazy_render", config.bool_from_path("app:lazy_render"));
+
+	current_key="10_seconds_between_pictures";
 }
 
 void controller_settings::draw(ldv::screen& _screen, int /*fps*/) {
@@ -96,7 +121,7 @@ void controller_settings::draw(ldv::screen& _screen, int /*fps*/) {
 
 		//Left side...
 		text_menu.set_text_align(ldv::ttf_representation::text_align::right);
-		text_menu.set_text(key+":");
+		text_menu.set_text(menu_translation[key]+":");
 		text_menu.go_to({0, y});
 		text_menu.align(
 			align_rect, 
@@ -107,6 +132,12 @@ void controller_settings::draw(ldv::screen& _screen, int /*fps*/) {
 			}
 		);
 		text_menu.draw(_screen);
+
+		if(key=="80_save_and_exit" || key=="90_exit_without_saving") {
+
+			y+=font_size * 1.5;
+			continue;
+		}
 
 		//Right side...
 		text_menu.set_text_align(ldv::ttf_representation::text_align::left);

@@ -1,4 +1,4 @@
-#pragma once
+	#pragma once
 
 //app
 #include <app/clock.h>
@@ -56,6 +56,7 @@ class controller_ambient:
 
 	//references...
 	lm::logger&                 log;
+	const app::app_config&      config;
 	const app::clock&           clock;
 
 	//properties

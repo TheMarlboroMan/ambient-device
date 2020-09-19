@@ -24,7 +24,7 @@ class controller_settings:
 								controller_settings(lm::logger&, ldtools::ttf_manager&, app::app_config&, const app::style&);
 	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
-	virtual void 				awake(dfw::input& /*input*/) {}
+	virtual void 				awake(dfw::input& /*input*/);
 	virtual void 				slumber(dfw::input& /*input*/) {}
 	virtual bool				can_leave_state() const {return true;}
 
@@ -39,8 +39,9 @@ class controller_settings:
 	const app::style&           style;
 
 	//properties
-	tools::options_menu<std::string>	menu;
-	std::string							current_key;
+	tools::options_menu<std::string>    menu;
+	std::string                         current_key;
+	std::map<std::string, std::string>  menu_translation;
 };
 
 }

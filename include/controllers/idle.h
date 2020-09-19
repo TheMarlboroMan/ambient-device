@@ -11,9 +11,12 @@
 
 #include <ldtools/ttf_manager.h>
 #include <lm/logger.h>
+#include <tools/options_menu.h>
 
 #include <ldv/ttf_representation.h>
 
+#include <string>
+#include <map>
 #include <cmath>
 
 namespace app
@@ -27,7 +30,7 @@ class controller_idle:
 								controller_idle(lm::logger&, ldtools::ttf_manager&, const app::app_config&, const app::style&, app::clock&);
 	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
-	virtual void 				awake(dfw::input& /*input*/) {}
+	virtual void 				awake(dfw::input& /*input*/);
 	virtual void 				slumber(dfw::input& /*input*/) {}
 	virtual bool				can_leave_state() const {return true;}
 
@@ -45,6 +48,9 @@ class controller_idle:
 	//properties
 	ldv::ttf_representation     clock_rep;
 	bool                        update_clock{false};
+	tools::options_menu<std::string>	menu;
+	std::string							current_key;
+	std::map<std::string, std::string>	menu_translation;
 
 };
 
