@@ -17,8 +17,7 @@
 using namespace app;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-//	:state_driver_interface(t_states::state_idle),
-	:state_driver_interface(t_states::state_settings),
+	:state_driver_interface(t_states::state_idle),
 	config(c), log(kernel.get_log()), kernel_ref(kernel) {
 
 	lm::log(log, lm::lvl::info)<<"setting state check function..."<<std::endl;

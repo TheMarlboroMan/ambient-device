@@ -17,6 +17,7 @@ controller_ambient::controller_ambient(
 	app::clock& _clock
 )
 	:log(_log),
+	config{_app_config},
 	clock{_clock},
 	with_vignette(_app_config.bool_from_path("app:with_vignette")),
 	show_seconds(_app_config.bool_from_path("app:show_seconds")),
@@ -132,6 +133,13 @@ void controller_ambient::awake(dfw::input&) {
 
 	stamp=std::time(nullptr);
 	update_clock_text();
+
+	seconds_between_pictures=config.int_from_path("app:seconds_between_pictures");
+	with_vignette=config.bool_from_path("app:with_vignette");
+	show_seconds=config.bool_from_path("app:show_seconds");
+	show_picture_counter=config.bool_from_path("app:show_picture_counter");
+	lazy_render=config.bool_from_path("app:lazy_render");
+	letterbox_pictures=config.bool_from_path("app:letterbox_pictures");
 }
 
 void controller_ambient::load_new_image() {
