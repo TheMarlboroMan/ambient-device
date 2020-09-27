@@ -27,9 +27,14 @@ class exif_reader {
 			return *this;
 		}
 
+		tag_set&                make_valid() {
+			valid=true;
+			return *this;
+		}
+
 		tag_set&                set_error_message(const std::string& _val) {
 
-			date=_val;
+			error_message=_val;
 			return *this;
 		}
 

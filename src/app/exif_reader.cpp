@@ -46,6 +46,7 @@ exif_reader::tag_set exif_reader::read(const std::string& _path) const {
 		}
 
 		uint8_t marker_type=buffer[1];
+		//This would be the "beginning of image data marker, so we are done"...
 		if(marker_type==0xda) {
 
 			break;
@@ -156,7 +157,7 @@ exif_reader::tag_set exif_reader::read(const std::string& _path) const {
 		infile.seekg(length, infile.cur);
 	}
 
-	return result;
+	return result.make_valid();
 }
 
 std::uint16_t exif_reader::to_uint16(void * _buffer, std::size_t _size) const {
