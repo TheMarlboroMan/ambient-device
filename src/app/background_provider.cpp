@@ -1,5 +1,6 @@
 #include <app/background_provider.h>
 #include <app/env.h>
+#include <app/exif_reader.h>
 
 #include <fstream>
 #include <vector>
@@ -64,12 +65,20 @@ void background_provider::load_defaults() {
 			begin=++pos;
 		}
 
-		if(4!=pieces.size()) {
+		if(3!=pieces.size()) {
 			//TODO: Should just log and go on ahead.
 			throw std::runtime_error("invalid default pictures line '"+line+"'");
 		}
 
-		defaults.push_back({app::get_pic_dir()+pieces[0], pieces[1], pieces[2], pieces[3]});
+		const std::string pic_path=app::get_pic_dir()+pieces[0];
+
+		app::exif_reader er;
+		auto res=er.read(pic_path);
+		const std::string date=res.is_valid()
+			? res.get_date()
+			: "";
+
+		defaults.push_back({pic_path, pieces[1], pieces[2], date});
 	}
 
 	if(!defaults.size()) {
