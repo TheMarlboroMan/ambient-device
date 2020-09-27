@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1)
+	cmake_minimum_required(VERSION 3.5.1)
 
 project(ambient-device)
 
@@ -37,8 +37,8 @@ set_target_properties(dfw PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdfw.so)
 
 add_executable(ambient-device src/main.cpp ${SOURCE})
 target_link_libraries(ambient-device dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL stdc++fs -pthread)
-#set_target_properties(ambient-device PROPERTIES RUNTIME_OUTPUT_DIRECTORY build)
 
+add_executable(exif-read src/exif-read.cpp src/app/exif_reader.cpp)
 #TODO: This is not cool.
 add_custom_command(TARGET ambient-device POST_BUILD COMMAND mkdir -p ~/.ambient-device/logs ~/.ambient-device/data)
 add_custom_command(TARGET ambient-device POST_BUILD COMMAND cp -r ../resources/* ~/.ambient-device/data/)
