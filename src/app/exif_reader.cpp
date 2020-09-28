@@ -3,7 +3,6 @@
 #include <arpa/inet.h>
 #include <cstring>
 #include <algorithm>
-#include <vector>
 
 using namespace app;
 
@@ -22,8 +21,7 @@ exif_reader::tag_set exif_reader::read(const std::string& _path) const {
 		return result.set_error_message("could not open file");
 	}
 
-	std::array<std::uint8_t, 128> buffer{};
-	buffer.fill(0);
+	std::vector<std::uint8_t> buffer{128, 0};
 
 	//Identify JPG header.
 	read_into_buffer(infile, buffer, 2);
@@ -35,6 +33,7 @@ exif_reader::tag_set exif_reader::read(const std::string& _path) const {
 	//This will be the start of the TIFF data, where all offsets must be applied.
 	auto tiff_offset{-1}, ifd_offset{0};
 	bool file_is_big_endian=false;
+	std::vector<data_index> data_tags;
 
 	//We should be expecting markers and markers...
 	while(true) {
@@ -83,7 +82,7 @@ exif_reader::tag_set exif_reader::read(const std::string& _path) const {
 				file_is_big_endian=true;
 			}
 			else {
-				
+
 				return result.set_error_message("bad endianess marker");
 			}
 
@@ -108,12 +107,11 @@ exif_reader::tag_set exif_reader::read(const std::string& _path) const {
 			read_into_buffer(infile, buffer, 4);
 			ifd_offset=buffer_to_integer(buffer.data(), 4, file_is_big_endian);
 
-			//travel to offset...
+			//travel to the the offset where TIFF data starts...
 			infile.seekg(tiff_offset+ifd_offset, infile.beg);
 
-			//Moving into the TIFF header.
+			//read TIFF header.
 			read_into_buffer(infile, buffer, 2);
-
 			int data_count=buffer_to_integer(buffer.data(), 2, file_is_big_endian);
 
 			for(int i=0; i< data_count; i++) {
@@ -134,30 +132,67 @@ exif_reader::tag_set exif_reader::read(const std::string& _path) const {
 				read_into_buffer(infile, buffer, 4);
 				int data_offset=buffer_to_integer(buffer.data(), 4, file_is_big_endian);
 
-				if(type==306) {
+				data_tags.push_back({type, format, components, data_offset});
+			}
 
-					if(components < 4) {
+			for(const auto& tag : data_tags) {
 
-						//TODO:
-						return result.set_error_message("unimplemented reading from small component");
+				switch(tag.type) {
+
+					case 306: {
+
+						std::string date_str=string_from_data_block(infile, tag, buffer, tiff_offset);
+
+						result.set_date(
+							date_str.substr(0, 10)
+						);
 					}
-
-					infile.seekg(tiff_offset+data_offset, infile.beg);
-					read_into_buffer(infile, buffer, components);
-					std::string date_str{buffer.data(), buffer.data()+components};
-					result.set_date(date_str);
 				}
 			}
-		}
-		else {
 
-			//...
+			break;
+
+
+			//TODO:
+			//There are 4 bytes now which link to the next IFD.
+			/*
+			//read_into_buffer(infile, buffer, 4);
+			int next_ifd_offset=buffer_to_integer(buffer.data(), 4, file_is_big_endian);
+
+			//No next IFD, we are done.
+			if(0==next_ifd_offset) {
+
+				break;
+			}
+
+			/
+			std::cout<<"NEXT IS "<<next_ifd_offset<<std::endl;
+			infile.seekg(tiff_offset+next_ifd_offset, infile.beg);
+			*/
+
 		}
 
 		infile.seekg(length, infile.cur);
 	}
 
 	return result.make_valid();
+}
+
+std::string exif_reader::string_from_data_block(std::ifstream& _infile, const data_index& _tag, std::vector<std::uint8_t>& _buffer, int _offset) const {
+
+	if(_tag.components < 4) {
+		throw std::runtime_error("unimplemented reading from small component");
+	}
+
+	auto current_marker=_infile.tellg();
+	_infile.seekg(_offset+_tag.data_offset, _infile.beg);
+	read_into_buffer(_infile, _buffer, _tag.components);
+	std::string result{_buffer.data(), _buffer.data()+_tag.components};
+
+	//return back.
+	_infile.seekg(current_marker, _infile.beg);
+	return result;
+
 }
 
 std::uint16_t exif_reader::to_uint16(void * _buffer, std::size_t _size) const {
@@ -167,9 +202,9 @@ std::uint16_t exif_reader::to_uint16(void * _buffer, std::size_t _size) const {
 	return ntohs(result);
 }
 
-void exif_reader::read_into_buffer(std::ifstream& _stream, std::array<std::uint8_t, 128>& _buffer, std::size_t _size) const {
+void exif_reader::read_into_buffer(std::ifstream& _stream, std::vector<std::uint8_t>& _buffer, std::size_t _size) const {
 
-	_buffer.fill(0);
+	std::fill(std::begin(_buffer), std::end(_buffer), 0);
 	_stream.read((char *)_buffer.data(), _size);
 }
 
@@ -200,23 +235,3 @@ int exif_reader::buffer_to_integer(std::uint8_t * _buffer, std::size_t _size, bo
 
 	return result;
 }
-
-/*
-#include <iomanip>
-
-template <typename T>
-void print_buffer(T data, std::size_t length) {
-
-	auto * ptr=data;
-	std::cout<<std::hex<<std::setfill('0');
-	for(std::size_t i=0; i<length; i++, ptr++) {
-
-		std::cout<<std::hex<<std::setw(2)<<(int)*ptr<<" ";
-	}
-
-	std::cout<<std::endl;
-}
-
-
-
-*/
