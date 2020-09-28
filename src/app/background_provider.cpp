@@ -24,14 +24,14 @@ app::background background_provider::get() {
 
 void background_provider::prev() {
 
-	index=index==0 
+	index=index==0
 		? defaults.size() -1
 		: index-1;
 }
 
 void background_provider::next() {
 
-	index=index==defaults.size() -1 
+	index=index==defaults.size() -1
 		? 0
 		: index+1;
 }
@@ -72,11 +72,13 @@ void background_provider::load_defaults() {
 
 		const std::string pic_path=app::get_pic_dir()+pieces[0];
 
+		std::string date{"no date"};
+
 		app::exif_reader er;
 		auto res=er.read(pic_path);
-		const std::string date=res.is_valid()
-			? res.get_date()
-			: "";
+		if(res.is_valid()) {
+			date=res.get_date();
+		}
 
 		defaults.push_back({pic_path, pieces[1], pieces[2], date});
 	}
