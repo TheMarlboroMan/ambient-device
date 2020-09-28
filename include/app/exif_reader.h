@@ -3,18 +3,18 @@
 #include <string>
 #include <cstdint>
 #include <fstream>
-#include <array>
+#include <vector>
 
 namespace app {
 
-//TODO: This is held together with duct tape. 
+//TODO: This is held together with duct tape.
 
 class exif_reader {
 
 	public:
 
 	class tag_set {
-	
+
 		public:
 
 		bool                   is_valid() const {return valid;}
@@ -51,10 +51,19 @@ class exif_reader {
 
 	private:
 
+	struct data_index {
+
+		int                    type,
+		                       format,
+		                       components,
+		                       data_offset;
+	};
+
 	const bool                 is_big_endian_machine;
 	std::uint16_t              to_uint16(void *, std::size_t) const;
-	void                       read_into_buffer(std::ifstream&, std::array<std::uint8_t, 128>& _buffer, std::size_t _size) const;
+	void                       read_into_buffer(std::ifstream&, std::vector<std::uint8_t>& _buffer, std::size_t _size) const;
 	int                        buffer_to_integer(std::uint8_t *, std::size_t, bool) const;
+	std::string                string_from_data_block(std::ifstream&, const data_index&, std::vector<std::uint8_t>&, int) const;
 
 };
 }
