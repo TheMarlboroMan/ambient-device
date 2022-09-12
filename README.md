@@ -10,7 +10,7 @@
 
 ##Adding your own pictures
 
-TODO
+I would like to make this a bit better, but don't really have time now. It is really easy tough, just putting the files in a directory and modifying an index file. If you checked the code and could not figure it out just drop me a note and I will set better instructions up.
 
 ##Troubleshooting:
 
@@ -27,13 +27,13 @@ TODO
 
 - segmentation violation when showing seconds
 - crash when loading invalid pic, better to skip and detect infinite bad loop.
-- config menu
+- config menu <- The "refactor" branch should take care of this.
 - pic crossfade (optional)
-- update source to new version of fw
+- update source to new version of fw <-- There is actually a "refactor" branch for this!
 - music?
 - pic service?
 - check in some other systems for opengl glitches
-- runnable from everywhere
+- runnable from everywhere <-- Pretty sure the "refactor" branch does this.
 - skip pic, prev pic, pause slide, restore slide...
 - preload next pic in separate thread
-- pic count (N/M)
+- pic count (N/M) <-- I think the "refactor" branch takes care of this.
